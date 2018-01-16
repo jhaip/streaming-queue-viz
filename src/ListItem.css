@@ -1,0 +1,19 @@
+.Bold {
+  color: red;
+}
+
+.Item {
+    margin-bottom: 10px;
+    display: flex;
+}
+
+.DateLabel {
+    margin-right: 10px;
+}
+
+.Value {
+    text-align: left;
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+}
