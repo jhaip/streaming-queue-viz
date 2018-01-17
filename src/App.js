@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import ListItem from './ListItem'
+import CodeListItem from './CodeListItem'
+import LineDiff from 'line-diff';
 
 class App extends Component {
   scrollToBottom = (source) => {
@@ -14,6 +16,7 @@ class App extends Component {
   componentDidMount() {
     this.scrollToBottom("code");
     this.scrollToBottom("serial");
+    window.LineDiff = LineDiff;
   }
   componentDidUpdate() {
     this.scrollToBottom("code");
@@ -22,8 +25,15 @@ class App extends Component {
   render() {
     console.log(this.props);
     console.log(this.props.list);
-    const serialListItems = ((this.props.list || [])["serial"] || []).map(x => <ListItem datum={x} />);
-    const codeListItems = ((this.props.list || [])["code"] || []).map(x => <ListItem datum={x} />);
+    const serialListItems = ((this.props.list || [])["serial"] || []).map(x =>
+      <ListItem datum={x} />
+    );
+    const codeListItems = ((this.props.list || [])["code"] || []).map((x, i, a) =>
+      <CodeListItem
+        datum={x}
+        prevDatum={(i >= 1) ? a[i-1] : null}
+      />
+    );
     return (
       <div className="App">
         <header className="App-header">

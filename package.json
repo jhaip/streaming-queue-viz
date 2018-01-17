@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "line-diff": "^1.2.8",
     "react": "^16.2.0",
+    "react-codemirror": "^1.0.0",
+    "react-codemirror2": "^3.0.7",
     "react-dom": "^16.2.0",
     "react-scripts": "1.0.17"
   },
