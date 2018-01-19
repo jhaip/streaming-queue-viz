@@ -21,7 +21,7 @@ function getBlocks(data, start, end) {
     }
     const lastInAcc = acc[acc.length-1];
     if (lastInAcc.end - lastInAcc.start < MIN) {
-      lastInAcc.index.push(val.index);
+      lastInAcc.index = lastInAcc.index.concat(val.index);
       lastInAcc.end = val.end;
       acc[acc.length-1] = lastInAcc;
       return acc;
@@ -38,6 +38,7 @@ class Timeline extends Component {
     super(props);
     this.state = {};
     this.tick = this.tick.bind(this);
+    this.onClick = this.onClick.bind(this);
   }
   tick() {
     this.forceUpdate();
@@ -47,6 +48,12 @@ class Timeline extends Component {
   }
   componentWillUnmount() {
     clearInterval(this.interval);
+  }
+  onClick(d) {
+    console.log("CLICKED!");
+    console.log(d.start);
+    console.log(d.end);
+    console.log(d.index);
   }
   render() {
     let visualBlocks = null;
@@ -66,7 +73,11 @@ class Timeline extends Component {
           label = `V${d.index[0]} - V${d.index[d.index.length-1]}`
         }
         return (
-          <div className="TimeBlock" style={{flex: `0 0 ${p}%`}}>
+          <div
+            className="TimeBlock"
+            style={{flex: `0 0 ${p}%`}}
+            onClick={() => this.onClick(d)}
+          >
             {label}
           </div>
         );
