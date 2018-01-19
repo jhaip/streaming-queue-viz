@@ -7,12 +7,35 @@ import LineDiff from 'line-diff';
 import Timeline from './Timeline';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      start: null,
+      end: null
+    };
+    this.onTimelineSelection = this.onTimelineSelection.bind(this);
+    this.resetView = this.resetView.bind(this);
+  }
   scrollToBottom(source) {
     if (source == "code") {
       this.codeMessagesEnd.scrollIntoView();
     } else {
       this.serialMessagesEnd.scrollIntoView();
     }
+  }
+  onTimelineSelection(d) {
+    console.log("GOT IT!!!!!")
+    console.log(d);
+    this.setState({
+      start: d.start,
+      end: d.end
+    })
+  }
+  resetView(d) {
+    this.setState({
+      start: null,
+      end: null
+    })
   }
   componentDidMount() {
     this.scrollToBottom("code");
@@ -26,10 +49,16 @@ class App extends Component {
   render() {
     console.log(this.props);
     console.log(this.props.list);
-    const serialListItems = ((this.props.list || [])["serial"] || []).map(x =>
+    const serialListItems = ((this.props.list || [])["serial"] || []).filter(x =>
+      (this.state.start === null || new Date(x.timestamp) >= this.state.start) &&
+      (this.state.end === null || new Date(x.timestamp) < this.state.end)
+    ).map(x =>
       <ListItem datum={x} />
     );
-    const codeListItems = ((this.props.list || [])["code"] || []).map((x, i, a) =>
+    const codeListItems = ((this.props.list || [])["code"] || []).filter(x =>
+      (this.state.start === null || new Date(x.timestamp) >= this.state.start) &&
+      (this.state.end === null || new Date(x.timestamp) < this.state.end)
+    ).map((x, i, a) =>
       <CodeListItem
         datum={x}
         prevDatum={(i >= 1) ? a[i-1] : null}
@@ -38,7 +67,13 @@ class App extends Component {
     return (
       <div className="App">
         <div style={{margin: '20px auto'}}>
-          <Timeline data={((this.props.list || [])["code"] || [])} />
+          <Timeline
+            data={((this.props.list || [])["code"] || [])}
+            onClick={this.onTimelineSelection}
+            start={this.state.start}
+            end={this.state.end}
+          />
+          <button onClick={this.resetView}>Reset</button>
         </div>
         <div style={{display: 'flex'}}>
           <div className="ScrollContainer">

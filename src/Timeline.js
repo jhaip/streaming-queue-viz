@@ -20,7 +20,7 @@ function getBlocks(data, start, end) {
       return [val];
     }
     const lastInAcc = acc[acc.length-1];
-    if (lastInAcc.end - lastInAcc.start < MIN) {
+    if (lastInAcc.end - lastInAcc.start < MIN && i < a.length-1) {
       lastInAcc.index = lastInAcc.index.concat(val.index);
       lastInAcc.end = val.end;
       acc[acc.length-1] = lastInAcc;
@@ -38,7 +38,6 @@ class Timeline extends Component {
     super(props);
     this.state = {};
     this.tick = this.tick.bind(this);
-    this.onClick = this.onClick.bind(this);
   }
   tick() {
     this.forceUpdate();
@@ -49,34 +48,32 @@ class Timeline extends Component {
   componentWillUnmount() {
     clearInterval(this.interval);
   }
-  onClick(d) {
-    console.log("CLICKED!");
-    console.log(d.start);
-    console.log(d.end);
-    console.log(d.index);
-  }
   render() {
     let visualBlocks = null;
     if (this.props.data && this.props.data.length > 0) {
-      const start = new Date(this.props.data[0].timestamp);
+      const start = this.props.start || new Date(this.props.data[0].timestamp);
       const now = convertDateToUTC(new Date());
       now.setSeconds(now.getSeconds() + 2);
-      const end = Math.max(
-        now,
-        new Date(this.props.data[this.props.data.length-1].timestamp)
-      );
+      const end = this.props.end || now;
       const timeRange = Math.max(end-start, 1);
-      visualBlocks = getBlocks(this.props.data, start, end).map((d, i) => {
+      const dataInRangeOffset = this.props.data.filter(x =>
+        (this.props.start !== null && new Date(x.timestamp) < this.props.start)
+      ).length;
+      const dataInRange = this.props.data.filter(x =>
+        (this.props.start === null || new Date(x.timestamp) >= this.props.start) &&
+        (this.props.end === null || new Date(x.timestamp) < this.props.end)
+      );
+      visualBlocks = getBlocks(dataInRange, start, end).map((d, i) => {
         const p = 100.0*(d.end - d.start)/(1.0*timeRange);
-        let label = `V${d.index[0]}`;
+        let label = `V${d.index[0]+dataInRangeOffset}`;
         if (d.index.length > 1) {
-          label = `V${d.index[0]} - V${d.index[d.index.length-1]}`
+          label = `V${d.index[0]+dataInRangeOffset} - V${d.index[d.index.length-1]+dataInRangeOffset}`
         }
         return (
           <div
             className="TimeBlock"
             style={{flex: `0 0 ${p}%`}}
-            onClick={() => this.onClick(d)}
+            onClick={() => this.props.onClick(d)}
           >
             {label}
           </div>
