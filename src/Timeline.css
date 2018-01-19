@@ -1,0 +1,14 @@
+.TimelineContainer {
+    width: 900px;
+    display: flex;
+    height: 80px;
+}
+
+.TimeBlock {
+    background-color: #CCC;
+    border: 3px solid #555;
+}
+.TimeBlock:hover {
+    background-color: #CAC;
+    cursor: pointer;
+}
