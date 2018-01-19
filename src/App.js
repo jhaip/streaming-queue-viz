@@ -4,9 +4,10 @@ import './App.css';
 import ListItem from './ListItem'
 import CodeListItem from './CodeListItem'
 import LineDiff from 'line-diff';
+import Timeline from './Timeline';
 
 class App extends Component {
-  scrollToBottom = (source) => {
+  scrollToBottom(source) {
     if (source == "code") {
       this.codeMessagesEnd.scrollIntoView();
     } else {
@@ -36,11 +37,9 @@ class App extends Component {
     );
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <h3>List:</h3>
+        <div style={{margin: '20px auto'}}>
+          <Timeline data={((this.props.list || [])["code"] || [])} />
+        </div>
         <div style={{display: 'flex'}}>
           <div className="ScrollContainer">
             {serialListItems}
