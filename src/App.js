@@ -6,6 +6,7 @@ import LineDiff from 'line-diff';
 import Timeline from './Timeline';
 import SerialDataView from './DataViews/SerialDataView'
 import CodeDataView from './DataViews/CodeDataView'
+import DerivativeDataView from './DataViews/DerivativeDataView'
 
 class App extends Component {
   constructor(props) {
@@ -36,6 +37,11 @@ class App extends Component {
         />
         <div style={{display: 'flex'}}>
           <SerialDataView
+            data={((this.props.list || [])["serial"] || [])}
+            start={this.state.start}
+            end={this.state.end}
+          />
+          <DerivativeDataView
             data={((this.props.list || [])["serial"] || [])}
             start={this.state.start}
             end={this.state.end}
