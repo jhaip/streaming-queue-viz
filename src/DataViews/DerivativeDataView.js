@@ -9,7 +9,18 @@ function evaluate(data, code) {
   return eval(code);
 }
 
-class SerialDataView extends Component {
+/*
+data.map(d => {
+  const N = parseInt(d.value);
+  const val = Array.apply(null, {length: N}).reduce(acc => acc+"|", "")
+  return {
+    "timestamp": d.timestamp,
+   	"value":  val
+  }
+});
+*/
+
+class DerivativeDataView extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -22,10 +33,18 @@ class SerialDataView extends Component {
   update(val) {
     this.setState({'code': val});
   }
-  run() {
+  run(nextData) {
+    const val = (typeof nextData !== 'undefined')
+      ? nextData
+      : this.props.data;
     this.setState({
-      derivative_data: evaluate(this.props.data, this.state.code)
-    })
+      derivative_data: evaluate(val, this.state.code)
+    });
+  }
+  componentWillReceiveProps(nextProps) {
+    if (typeof nextProps.data !== 'undefined' && this.state.code !== '') {
+      this.run(nextProps.data);
+    }
   }
   scrollToBottom() {
     this.messagesEnd.scrollIntoView();
@@ -60,7 +79,7 @@ class SerialDataView extends Component {
           />
           <div>
             <button
-              onClick={this.run}
+              onClick={() => this.run()}
             >
               Run
             </button>
@@ -75,4 +94,4 @@ class SerialDataView extends Component {
   }
 }
 
-export default SerialDataView;
+export default DerivativeDataView;
