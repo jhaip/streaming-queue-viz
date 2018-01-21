@@ -1,11 +1,15 @@
 .ScrollContainer {
     flex: 1 1 50%;
     height: 600px;
-    overflow-y: scroll;
     border: 1px solid #EEE;
-    padding: 0 20px;
     margin: 10px;
     font-size: 16px;
+    position: relative;
+}
+.ScrollContainerData {
+    overflow-y: scroll;
+    padding: 0 20px;
+    height: 100%;
 }
 
 .TimelineButton {

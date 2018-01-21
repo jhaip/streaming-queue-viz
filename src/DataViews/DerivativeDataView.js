@@ -33,10 +33,12 @@ class DerivativeDataView extends Component {
     super(props);
     this.state = {
       code: '',
-      derivative_data: []
+      derivative_data: [],
+      showCodeEditor: true
     };
     this.update = this.update.bind(this);
     this.run = this.run.bind(this);
+    this.toggleCode = this.toggleCode.bind(this);
   }
   update(val) {
     this.setState({'code': val});
@@ -48,6 +50,11 @@ class DerivativeDataView extends Component {
     this.setState({
       derivative_data: evaluate(val, this.state.code)
     });
+  }
+  toggleCode() {
+    this.setState({
+      showCodeEditor: !this.state.showCodeEditor
+    })
   }
   componentWillReceiveProps(nextProps) {
     if (typeof nextProps.data !== 'undefined' && this.state.code !== '') {
@@ -76,29 +83,38 @@ class DerivativeDataView extends Component {
     return (
       <div className="ScrollContainer" key="serial">
         <div
-          style={{marginLeft: '-20px', borderBottom: '2px solid blue'}}
+          style={{borderBottom: '2px solid blue', position: 'absolute', background: 'white', width: '100%'}}
         >
-          <CodeMirror
-            value={this.state.code}
-            onBeforeChange={(editor, data, value) => {
-              this.update(value);
-            }}
-            options={{
-              lineNumbers: true,
-              mode: 'python'
-            }}
-          />
           <div>
             <button
               onClick={() => this.run()}
             >
               Run
             </button>
+            <button
+              onClick={() => this.toggleCode()}
+            >
+              Toggle Code
+            </button>
           </div>
+          { this.state.showCodeEditor &&
+            <CodeMirror
+              value={this.state.code}
+              onBeforeChange={(editor, data, value) => {
+                this.update(value);
+              }}
+              options={{
+                lineNumbers: true,
+                mode: 'python'
+              }}
+            />
+          }
         </div>
-        {listItems}
-        <div style={{ float:"left", clear: "both" }}
-             ref={(el) => { this.messagesEnd = el; }}>
+        <div className="ScrollContainerData">
+          {listItems}
+          <div style={{ float:"left", clear: "both" }}
+               ref={(el) => { this.messagesEnd = el; }}>
+          </div>
         </div>
       </div>
     );

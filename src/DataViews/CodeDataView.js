@@ -24,9 +24,11 @@ class SerialDataView extends Component {
     );
     return (
       <div className="ScrollContainer" key="code">
-        {listItems}
-        <div style={{ float:"left", clear: "both" }}
-             ref={(el) => { this.messagesEnd = el; }}>
+        <div className="ScrollContainerData">
+          {listItems}
+          <div style={{ float:"left", clear: "both" }}
+               ref={(el) => { this.messagesEnd = el; }}>
+          </div>
         </div>
       </div>
     );
