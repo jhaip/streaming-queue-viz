@@ -59,8 +59,11 @@ class DerivativeDataView extends Component {
     const listItems = this.state.derivative_data.filter(x =>
       (this.props.start === null || new Date(x.timestamp) >= this.props.start) &&
       (this.props.end === null || new Date(x.timestamp) < this.props.end)
-    ).map(x =>
-      <ListItem datum={x} />
+    ).map(datum =>
+      <div key={datum.timestamp} className="Item">
+        <strong className="DateLabel">{`(${datum.timestamp})`}</strong>
+        <div className="Value" dangerouslySetInnerHTML={{__html: datum.value}} />
+      </div>
     );
     return (
       <div className="ScrollContainer" key="serial">
