@@ -15,12 +15,71 @@ class App extends Component {
     };
     this.onTimelineSelection = this.onTimelineSelection.bind(this);
     this.resetView = this.resetView.bind(this);
+    this.onClickAddOneNewer = this.onClickAddOneNewer.bind(this);
+    this.onClickAddOneOlder = this.onClickAddOneOlder.bind(this);
+    this.onClickPrev = this.onClickPrev.bind(this);
+    this.onClickNext = this.onClickNext.bind(this);
   }
   scrollToBottom(source) {
     if (source == "code") {
       this.codeMessagesEnd.scrollIntoView();
     } else {
       this.serialMessagesEnd.scrollIntoView();
+    }
+  }
+  onClickAddOneNewer() {
+    const code = ((this.props.list || [])["code"] || []);
+    if (code.length > 0 && this.state.end !== null) {
+      const codeAfter = code.filter(c => new Date(c.timestamp) > this.state.end);
+      if (codeAfter.length > 0) {
+        this.setState({
+          end: new Date(codeAfter[0].timestamp)
+        });
+      } else {
+        this.setState({
+          end: null
+        });
+      }
+    }
+  }
+  onClickNext() {
+    const code = ((this.props.list || [])["code"] || []);
+    if (code.length > 0 && this.state.end !== null) {
+      const codeAfter = code.filter(c => new Date(c.timestamp) > this.state.end);
+      if (codeAfter.length > 0) {
+        this.setState({
+          start: this.state.end,
+          end: new Date(codeAfter[0].timestamp)
+        });
+      } else {
+        this.setState({
+          start: this.state.end,
+          end: null
+        });
+      }
+    }
+  }
+  onClickAddOneOlder() {
+    const code = ((this.props.list || [])["code"] || []);
+    if (code.length > 0 && this.state.start !== null) {
+      const codeBefore = code.filter(c => new Date(c.timestamp) < this.state.start);
+      if (codeBefore.length > 0) {
+        this.setState({
+          start: new Date(codeBefore[codeBefore.length-1].timestamp)
+        });
+      }
+    }
+  }
+  onClickPrev() {
+    const code = ((this.props.list || [])["code"] || []);
+    if (code.length > 0 && this.state.start !== null) {
+      const codeBefore = code.filter(c => new Date(c.timestamp) < this.state.start);
+      if (codeBefore.length > 0) {
+        this.setState({
+          start: new Date(codeBefore[codeBefore.length-1].timestamp),
+          end: this.state.start
+        });
+      }
     }
   }
   onTimelineSelection(d) {
@@ -67,13 +126,41 @@ class App extends Component {
     return (
       <div className="App">
         <div style={{margin: '20px auto'}}>
+          <div style={{margin: '10px'}}>
+            <strong>
+              {this.state.start !== null ? this.state.start.toString() : 'Beginning'}
+            </strong>
+            {` - `}
+            <strong>
+              {this.state.end !== null ? this.state.end.toString() : 'Now'}
+            </strong>
+          </div>
           <Timeline
             data={((this.props.list || [])["code"] || [])}
             onClick={this.onTimelineSelection}
             start={this.state.start}
             end={this.state.end}
           />
-          <button onClick={this.resetView}>Reset</button>
+          <button
+            className="TimelineButton"
+            onClick={this.onClickPrev}
+          >Previous</button>
+          <button
+            className="TimelineButton"
+            onClick={this.onClickAddOneOlder}
+          >Add 1 Older</button>
+          <button
+            className="TimelineButton"
+            onClick={this.resetView}
+          >See All</button>
+          <button
+            className="TimelineButton"
+            onClick={this.onClickAddOneNewer}
+          >Add 1 Newer</button>
+          <button
+            className="TimelineButton"
+            onClick={this.onClickNext}
+          >Next</button>
         </div>
         <div style={{display: 'flex'}}>
           <div className="ScrollContainer">
