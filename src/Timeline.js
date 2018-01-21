@@ -38,9 +38,76 @@ class Timeline extends Component {
     super(props);
     this.state = {};
     this.tick = this.tick.bind(this);
+    this.resetView = this.resetView.bind(this);
+    this.onClickAddOneNewer = this.onClickAddOneNewer.bind(this);
+    this.onClickAddOneOlder = this.onClickAddOneOlder.bind(this);
+    this.onClickPrev = this.onClickPrev.bind(this);
+    this.onClickNext = this.onClickNext.bind(this);
   }
   tick() {
     this.forceUpdate();
+  }
+  resetView(d) {
+    this.props.onClick({
+      start: null,
+      end: null
+    })
+  }
+  onClickAddOneNewer() {
+    const code = this.props.data;
+    if (code.length > 0 && this.props.end !== null) {
+      const codeAfter = code.filter(c => new Date(c.timestamp) > this.props.end);
+      if (codeAfter.length > 0) {
+        this.props.onClick({
+          end: new Date(codeAfter[0].timestamp)
+        });
+      } else {
+        this.props.onClick({
+          end: null
+        });
+      }
+    }
+  }
+  onClickNext() {
+    const code = this.props.data;
+    if (code.length > 0 && this.props.end !== null) {
+      const codeAfter = code.filter(c => new Date(c.timestamp) > this.props.end);
+      if (codeAfter.length > 0) {
+        this.props.onClick({
+          start: this.props.end,
+          end: new Date(codeAfter[0].timestamp)
+        });
+
+      } else {
+        this.props.onClick({
+          start: this.props.end,
+          end: null
+        });
+      }
+    }
+  }
+  onClickAddOneOlder() {
+    const code = this.props.data;
+    if (code.length > 0 && this.props.start !== null) {
+      const codeBefore = code.filter(c => new Date(c.timestamp) < this.props.start);
+      if (codeBefore.length > 0) {
+        this.props.onClick({
+          start: new Date(codeBefore[codeBefore.length-1].timestamp)
+        });
+      }
+    }
+  }
+  onClickPrev() {
+    const code = this.props.data;
+    if (code.length > 0 && this.props.start !== null) {
+      const codeBefore = code.filter(c => new Date(c.timestamp) < this.props.start);
+      if (codeBefore.length > 0) {
+        this.props.onClick({
+          start: new Date(codeBefore[codeBefore.length-1].timestamp),
+          end: this.props.start
+        });
+      }
+    }
   }
   componentDidMount() {
     this.interval = setInterval(this.tick, 1000);
@@ -81,8 +148,39 @@ class Timeline extends Component {
       });
     }
     return (
-      <div className="TimelineContainer">
-        { visualBlocks }
+      <div style={{margin: '20px auto'}}>
+        <div style={{margin: '10px'}}>
+          <strong>
+            {this.props.start !== null ? this.props.start.toString() : 'Beginning'}
+          </strong>
+          {` - `}
+          <strong>
+            {this.props.end !== null ? this.props.end.toString() : 'Now'}
+          </strong>
+        </div>
+        <div className="TimelineContainer">
+          { visualBlocks }
+        </div>
+        <button
+          className="TimelineButton"
+          onClick={this.onClickPrev}
+        >Previous</button>
+        <button
+          className="TimelineButton"
+          onClick={this.onClickAddOneOlder}
+        >Add 1 Older</button>
+        <button
+          className="TimelineButton"
+          onClick={this.resetView}
+        >See All</button>
+        <button
+          className="TimelineButton"
+          onClick={this.onClickAddOneNewer}
+        >Add 1 Newer</button>
+        <button
+          className="TimelineButton"
+          onClick={this.onClickNext}
+        >Next</button>
       </div>
     );
   }
