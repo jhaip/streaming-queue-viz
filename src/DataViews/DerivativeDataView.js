@@ -18,6 +18,14 @@ data.map(d => {
    	"value":  val
   }
 });
+
+data.map(d => {
+  const N = parseInt(d.value);
+  return {
+    "timestamp": d.timestamp,
+   	"value":  `<svg><rect width="${N*10}" height="100" style="fill:rgb(0,0,255)" /></svg>`
+  }
+});
 */
 
 class DerivativeDataView extends Component {
