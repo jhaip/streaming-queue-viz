@@ -19,10 +19,10 @@ services:
         depends_on:
             - rabbit
         command: ["./wait-for-it.sh", "rabbit:5672", "--", "python", "app.py"]
-    echo:
+    dbconsumer:
         build: .
         links:
             - rabbit
         depends_on:
             - rabbit
-        command: ["./wait-for-it.sh", "rabbit:5672", "--", "python", "echo.py"]
+        command: ["./wait-for-it.sh", "rabbit:5672", "--", "python", "consumer_db_log.py"]
