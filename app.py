@@ -6,6 +6,7 @@
 # 2. pip install tornado
 
 import os
+import sys
 import tornado.ioloop
 import tornado.web
 import tornado.websocket
@@ -14,6 +15,7 @@ from threading import Thread
 import logging
 import json
 import datetime
+import uuid
 logging.basicConfig(level=logging.INFO)
 
 
@@ -43,10 +45,15 @@ def disconnect_to_rabbitmq():
 
 
 def consumer_callback(ch, method, properties, body):
-        logging.info("[x] Received %r" % (body,))
-        # The messagge is brodcast to the connected clients
-        for itm in clients:
-            itm.write_message(body)
+    logging.info("[x] Received %r" % (body,))
+    # The messagge is brodcast to the connected clients
+    for itm in clients:
+        response = {
+            "name": "DATA_UPDATE",
+            "messageId": str(uuid.uuid4()),
+            "params": body
+        }
+        itm.write_message(response)
 
 
 class SocketHandler(tornado.websocket.WebSocketHandler):
@@ -54,6 +61,27 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         logging.info('WebSocket opened')
         clients.append(self)
         logging.info("# CLIENTS: %d" % (len(clients),))
+
+    def on_message(self, message):
+        logging.info("websocket message received")
+        logging.info(str(message))
+        try:
+            json_data = json.loads(str(message))
+            logging.info(json_data)
+            if json_data.get("name") == "GET_DATA":
+                response = {
+                    "name": "GET_DATA_RESULT",
+                    "messageId": json_data.get("messageId"),
+                    "params": [
+                        5,
+                        6,
+                        7,
+                        8
+                    ]
+                }
+                self.write_message(json.dumps(response))
+        except:
+            print("Unexpected error: %s" % sys.exc_info()[0])
 
     def on_close(self):
         logging.info('WebSocket closed')
@@ -82,10 +110,17 @@ class MainHandler(tornado.web.RequestHandler):
         self.set_status(200)
 
 
+class DataHandler(tornado.web.RequestHandler):
+    def get(self):
+        data = {}
+        self.write(data)
+
+
 application = tornado.web.Application([
     (r'/ws', SocketHandler),
     (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': 'build/static'}),
     (r"/", MainHandler),
+    (r"/data/", DataHandler)
 ])
 
 
