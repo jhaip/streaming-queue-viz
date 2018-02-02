@@ -45,15 +45,16 @@ def disconnect_to_rabbitmq():
 
 
 def consumer_callback(ch, method, properties, body):
-    logging.info("[x] Received %r" % (body,))
+    body_str = json.loads(str(body, 'utf-8'))
+    logging.info("[x] Received %s" % (body_str,))
     # The messagge is brodcast to the connected clients
     for itm in clients:
         response = {
             "name": "DATA_UPDATE",
             "messageId": str(uuid.uuid4()),
-            "params": body
+            "params": body_str
         }
-        itm.write_message(response)
+        itm.write_message(json.dumps(response))
 
 
 class SocketHandler(tornado.websocket.WebSocketHandler):
@@ -105,7 +106,7 @@ class MainHandler(tornado.web.RequestHandler):
                              queue='my_queue')
         r_channel.basic_publish(exchange='logs',
                                 routing_key='',
-                                body=json.dumps(data))
+                                body=str(json.dumps(data)))
         r_connection.close()
         self.set_status(200)
 

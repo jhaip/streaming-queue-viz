@@ -42,20 +42,9 @@ def threaded_rmq():
 def consumer_callback(ch, method, properties, body):
     global db_conn
     global db_c
-    logging.info("[db consumer] Received %r" % (body,))
-    body_str = "%r" % (body,)
+    body_str = str(body, 'utf-8')
+    logging.info("[db consumer] Received %s" % (body_str,))
     if body_str:
-        body_str = body_str[2:-1]
-        logging.info("------")
-        logging.info(body_str)
-        logging.info("------")
-        # body_str = body_str.decode("utf-8")
-        # logging.info(body_str)
-        # logging.info("------")
-        logging.info(type(body_str))
-        # for x in body_str:
-        #     logging.info(x)
-        #     logging.info(type(x))
         body_json = json.loads(body_str)
         logging.info(body_json)
         logging.info("******")
