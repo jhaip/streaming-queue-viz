@@ -20,7 +20,11 @@ services:
             - rabbit
         command: ["./wait-for-it.sh", "rabbit:5672", "--", "python", "app.py"]
     dbconsumer:
+        restart: always
         build: .
+        working_dir: /app
+        volumes:
+            - .:/app
         links:
             - rabbit
         depends_on:
