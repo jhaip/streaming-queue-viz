@@ -14,6 +14,7 @@ import pika
 from threading import Thread
 import logging
 import json
+import sqlite3
 import datetime
 import uuid
 logging.basicConfig(level=logging.INFO)
@@ -70,19 +71,31 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
             json_data = json.loads(str(message))
             logging.info(json_data)
             if json_data.get("name") == "GET_DATA":
+                results = []
+                db_conn = sqlite3.connect('example.db')
+                db_c = db_conn.cursor()
+                logging.info("GOT CONNECTION")
+                logging.info(db_conn)
+                logging.info(db_c)
+                for row in db_c.execute('SELECT * FROM data'):
+                    logging.info("ROW")
+                    logging.info(row)
+                    results.append({
+                        "timestamp": row[0],
+                        "value": row[1],
+                        "source": row[2]
+                    })
+                logging.info("returning results")
+                logging.info(results)
                 response = {
                     "name": "GET_DATA_RESULT",
                     "messageId": json_data.get("messageId"),
-                    "params": [
-                        5,
-                        6,
-                        7,
-                        8
-                    ]
+                    "params": results
                 }
                 self.write_message(json.dumps(response))
+                db_conn.close()
         except:
-            print("Unexpected error: %s" % sys.exc_info()[0])
+            logging.error("Unexpected error: %s" % sys.exc_info()[0])
 
     def on_close(self):
         logging.info('WebSocket closed')

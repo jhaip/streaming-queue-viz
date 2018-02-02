@@ -37,6 +37,11 @@ export function initWebsockets(callback) {
         } else if (message.name === 'GET_DATA_RESULT') {
           console.log("GET_DATA_RESULT");
           console.log(message);
+          STORE = message.params.reduce((acc, v) => {
+            acc[v.source] = (acc[v.source] || []).concat(v);
+            return acc;
+          }, {});
+          callback(STORE);
         }
       } catch(error) {
         console.error(error);
