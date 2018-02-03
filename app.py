@@ -94,6 +94,11 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
                 }
                 self.write_message(json.dumps(response))
                 db_conn.close()
+            elif json_data.get("name") == "SAVE_DATA":
+                save_data({
+                    "value": json.dumps(json_data.get("params")),
+                    "source": "view"
+                })
         except:
             logging.error("Unexpected error: %s" % sys.exc_info()[0])
 
@@ -103,24 +108,28 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         logging.info("# CLIENTS: %d" % (len(clients),))
 
 
+def save_data(data):
+    data["timestamp"] = datetime.datetime.utcnow().isoformat()
+    r_connection = pika.BlockingConnection(pika.ConnectionParameters('rabbit'))
+    r_channel = r_connection.channel()
+    r_channel.exchange_declare(exchange='logs',
+                               exchange_type='fanout')
+    r_channel.queue_declare(queue="my_queue")
+    r_channel.queue_bind(exchange='logs',
+                         queue='my_queue')
+    r_channel.basic_publish(exchange='logs',
+                            routing_key='',
+                            body=str(json.dumps(data)))
+    r_connection.close()
+
+
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("build/index.html")
 
     def post(self):
         data = tornado.escape.json_decode(self.request.body)
-        data["timestamp"] = datetime.datetime.utcnow().isoformat()
-        r_connection = pika.BlockingConnection(pika.ConnectionParameters('rabbit'))
-        r_channel = r_connection.channel()
-        r_channel.exchange_declare(exchange='logs',
-                                   exchange_type='fanout')
-        r_channel.queue_declare(queue="my_queue")
-        r_channel.queue_bind(exchange='logs',
-                             queue='my_queue')
-        r_channel.basic_publish(exchange='logs',
-                                routing_key='',
-                                body=str(json.dumps(data)))
-        r_connection.close()
+        save_data(data)
         self.set_status(200)
 
 

@@ -66,6 +66,14 @@ function guid() {
     s4() + '-' + s4() + s4() + s4();
 }
 
+export function saveView(view) {
+  ws.send(JSON.stringify({
+    name: "SAVE_DATA",
+    messageId: guid(),
+    params: view
+  }));
+}
+
 export function websocketFunctionCall() {
   if (!window.ws) {
     console.error("websockets is not defined!");

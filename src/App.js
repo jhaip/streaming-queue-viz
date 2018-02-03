@@ -7,6 +7,7 @@ import Timeline from './Timeline';
 import SerialDataView from './DataViews/SerialDataView'
 import CodeDataView from './DataViews/CodeDataView'
 import DerivativeDataView from './DataViews/DerivativeDataView'
+import { saveView } from './ws'
 
 class App extends Component {
   constructor(props) {
@@ -22,6 +23,35 @@ class App extends Component {
       start: (typeof d.start !== 'undefined') ? d.start : this.state.start,
       end: (typeof d.end !== 'undefined') ? d.end : this.state.end
     })
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.start != this.state.start ||
+        prevState.end != this.state.end) {
+      const view = {
+        start: this.state.start,
+        end: this.state.end,
+        subviews: [
+          {
+            sources: ["serial"],
+            type: "",
+            func: null
+          },
+          {
+            sources: ["serial"],
+            type: "",
+            func: null
+          },
+          {
+            sources: ["code"],
+            type: "code",
+            func: null
+          }
+        ]
+      }
+      console.log("NEW VIEW");
+      console.log(view);
+      saveView(view);
+    }
   }
   componentDidMount() {
     window.LineDiff = LineDiff;
