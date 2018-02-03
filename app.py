@@ -77,7 +77,18 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
                 logging.info("GOT CONNECTION")
                 logging.info(db_conn)
                 logging.info(db_c)
-                for row in db_c.execute('SELECT * FROM data'):
+                sql_query = 'SELECT * FROM data'
+                if json_data.get("params"):
+                    data_source = json_data["params"].get("source")
+                    data_limit = json_data["params"].get("limit")
+                    data_start = json_data["params"].get("start")
+                    data_end = json_data["params"].get("end")
+                    if data_source == 'view' and data_limit == 1:
+                        sql_query = "SELECT * FROM data WHERE source = 'view' ORDER BY timestamp DESC LIMIT 1"
+                    if data_start and data_end:
+                        # TODO: parse datetime
+                        sql_query = "SELECT * FROM data WHERE timestamp >= %s and timestamp <= %s"
+                for row in db_c.execute(sql_query):
                     logging.info("ROW")
                     logging.info(row)
                     results.append({

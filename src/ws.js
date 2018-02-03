@@ -4,6 +4,7 @@ export function initWebsockets(callback) {
     var uri= window.location.host + window.location.pathname + 'ws';
     var new_uri;
     var STORE = {};
+    var firstViewMessageId = null;
     if (window.location.protocol === 'http:') {
         new_uri = "ws:"+uri;
      } else {
@@ -24,6 +25,7 @@ export function initWebsockets(callback) {
 
     ws.onopen = function(evt) {
       console.log("Connection open ...\n")
+      firstViewMessageId = getLastView()
     };
 
     ws.onmessage = function(evt){
@@ -42,6 +44,27 @@ export function initWebsockets(callback) {
             return acc;
           }, {});
           callback(STORE);
+          if (message.messageId === firstViewMessageId) {
+            console.log("RECIEVED THE FIRST VIEW!!!")
+            console.log("fetching new data now...")
+            const data = message.params;
+            if (data && data.length > 0) {
+              const view = JSON.parse(data[0].value);
+              console.log("LAST VIEW DESCRIPTION:");
+              console.log(view);
+              const sources = view.subviews.reduce((acc, v) => {
+                return acc.concat(v.sources)
+              }, []).filter((v, i, a) => a.indexOf(v) === i);
+              getData({
+                start: view.start,
+                end: view.end,
+                sources: sources
+              })
+            } else {
+              // no previous view, default to getting everything
+              getData();
+            }
+          }
         }
       } catch(error) {
         console.error(error);
@@ -74,7 +97,20 @@ export function saveView(view) {
   }));
 }
 
-export function websocketFunctionCall() {
+export function getLastView() {
+  const firstViewMessageId = guid()
+  ws.send(JSON.stringify({
+    name: "GET_DATA",
+    messageId: firstViewMessageId,
+    params: {
+      "source": "view",
+      "limit": 1
+    }
+  }));
+  return firstViewMessageId;
+}
+
+export function getData(params) {
   if (!window.ws) {
     console.error("websockets is not defined!");
     return;
@@ -82,7 +118,7 @@ export function websocketFunctionCall() {
   ws.send(JSON.stringify({
     name: "GET_DATA",
     messageId: guid(),
-    params: {}
+    params: params || {}
   }));
 }
-window.websocketFunctionCall = websocketFunctionCall;
+window.getData = getData;
