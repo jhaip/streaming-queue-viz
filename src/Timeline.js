@@ -69,7 +69,7 @@ class Timeline extends Component {
   onClickNext() {
     const code = this.props.data;
     if (code.length > 0 && this.props.end !== null) {
-      const codeAfter = code.filter(c => moment.utc(c.timestamp) > this.props.end).toDate();
+      const codeAfter = code.filter(c => moment.utc(c.timestamp).toDate() > this.props.end);
       if (codeAfter.length > 0) {
         this.props.onClick({
           start: this.props.end,
@@ -87,7 +87,7 @@ class Timeline extends Component {
   onClickAddOneOlder() {
     const code = this.props.data;
     if (code.length > 0 && this.props.start !== null) {
-      const codeBefore = code.filter(c => moment.utc(c.timestamp) < this.props.start).toDate();
+      const codeBefore = code.filter(c => moment.utc(c.timestamp).toDate() < this.props.start);
       if (codeBefore.length > 0) {
         this.props.onClick({
           start: moment.utc(codeBefore[codeBefore.length-1].timestamp).toDate()
