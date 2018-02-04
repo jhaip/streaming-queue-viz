@@ -13,10 +13,21 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      start: null,
-      end: null
+      start: props.start,
+      end: props.end
     };
     this.onTimelineSelection = this.onTimelineSelection.bind(this);
+  }
+  componentWillReceiveProps(nextProps) {
+    if (
+      this.props.start !== nextProps.start ||
+      this.props.end !== nextProps.end
+    ) {
+      this.setState({
+        start: nextProps.start,
+        end: nextProps.end
+      });
+    }
   }
   onTimelineSelection(d) {
     this.setState({

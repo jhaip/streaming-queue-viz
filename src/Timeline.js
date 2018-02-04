@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import './Timeline.css';
+import moment from 'moment'
 
-function convertDateToUTC(date) {
-    return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
-}
 
 function getBlocks(data, start, end) {
   const ranges = data.map((d, i, a) => {
     return Object.assign({}, d, {
-      start: new Date(d.timestamp),
-      end: (i < a.length-1) ? new Date(a[i+1].timestamp) : end,
+      start: moment.utc((d.timestamp)).toDate(),
+      end: (i < a.length-1) ? moment.utc(a[i+1].timestamp).toDate() : end,
       index: [i]
     })
   });
@@ -56,10 +54,10 @@ class Timeline extends Component {
   onClickAddOneNewer() {
     const code = this.props.data;
     if (code.length > 0 && this.props.end !== null) {
-      const codeAfter = code.filter(c => new Date(c.timestamp) > this.props.end);
+      const codeAfter = code.filter(c => moment.utc(c.timestamp).toDate() > this.props.end);
       if (codeAfter.length > 0) {
         this.props.onClick({
-          end: new Date(codeAfter[0].timestamp)
+          end: moment.utc(codeAfter[0].timestamp).toDate()
         });
       } else {
         this.props.onClick({
@@ -71,11 +69,11 @@ class Timeline extends Component {
   onClickNext() {
     const code = this.props.data;
     if (code.length > 0 && this.props.end !== null) {
-      const codeAfter = code.filter(c => new Date(c.timestamp) > this.props.end);
+      const codeAfter = code.filter(c => moment.utc(c.timestamp) > this.props.end).toDate();
       if (codeAfter.length > 0) {
         this.props.onClick({
           start: this.props.end,
-          end: new Date(codeAfter[0].timestamp)
+          end: moment.utc(codeAfter[0].timestamp).toDate()
         });
 
       } else {
@@ -89,10 +87,10 @@ class Timeline extends Component {
   onClickAddOneOlder() {
     const code = this.props.data;
     if (code.length > 0 && this.props.start !== null) {
-      const codeBefore = code.filter(c => new Date(c.timestamp) < this.props.start);
+      const codeBefore = code.filter(c => moment.utc(c.timestamp) < this.props.start).toDate();
       if (codeBefore.length > 0) {
         this.props.onClick({
-          start: new Date(codeBefore[codeBefore.length-1].timestamp)
+          start: moment.utc(codeBefore[codeBefore.length-1].timestamp).toDate()
         });
       }
     }
@@ -100,10 +98,10 @@ class Timeline extends Component {
   onClickPrev() {
     const code = this.props.data;
     if (code.length > 0 && this.props.start !== null) {
-      const codeBefore = code.filter(c => new Date(c.timestamp) < this.props.start);
+      const codeBefore = code.filter(c => moment.utc(c.timestamp).toDate() < this.props.start);
       if (codeBefore.length > 0) {
         this.props.onClick({
-          start: new Date(codeBefore[codeBefore.length-1].timestamp),
+          start: moment.utc(codeBefore[codeBefore.length-1].timestamp).toDate(),
           end: this.props.start
         });
       }
@@ -118,17 +116,17 @@ class Timeline extends Component {
   render() {
     let visualBlocks = null;
     if (this.props.data && this.props.data.length > 0) {
-      const start = this.props.start || new Date(this.props.data[0].timestamp);
-      const now = convertDateToUTC(new Date());
+      const start = this.props.start || moment.utc(this.props.data[0].timestamp).toDate();
+      const now = moment.utc().toDate();
       now.setSeconds(now.getSeconds() + 2);
       const end = this.props.end || now;
       const timeRange = Math.max(end-start, 1);
       const dataInRangeOffset = this.props.data.filter(x =>
-        (this.props.start !== null && new Date(x.timestamp) < this.props.start)
+        (this.props.start !== null && moment.utc(x.timestamp).toDate() < this.props.start)
       ).length;
       const dataInRange = this.props.data.filter(x =>
-        (this.props.start === null || new Date(x.timestamp) >= this.props.start) &&
-        (this.props.end === null || new Date(x.timestamp) < this.props.end)
+        (this.props.start === null || moment.utc(x.timestamp).toDate() >= this.props.start) &&
+        (this.props.end === null || moment.utc(x.timestamp).toDate() < this.props.end)
       );
       visualBlocks = getBlocks(dataInRange, start, end).map((d, i) => {
         const p = 100.0*(d.end - d.start)/(1.0*timeRange);
@@ -151,11 +149,11 @@ class Timeline extends Component {
       <div style={{margin: '20px auto'}}>
         <div style={{margin: '10px'}}>
           <strong>
-            {this.props.start !== null ? this.props.start.toString() : 'Beginning'}
+            {this.props.start ? this.props.start.toString() : 'Beginning'}
           </strong>
           {` - `}
           <strong>
-            {this.props.end !== null ? this.props.end.toString() : 'Now'}
+            {this.props.end ? this.props.end.toString() : 'Now'}
           </strong>
         </div>
         <div className="TimelineContainer">

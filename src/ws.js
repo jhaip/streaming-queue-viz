@@ -1,9 +1,11 @@
+import moment from 'moment'
+
 export function initWebsockets(callback) {
   // document.addEventListener('DOMContentLoaded', function(){
     console.log("initWebsockets");
     var uri= window.location.host + window.location.pathname + 'ws';
     var new_uri;
-    var STORE = {};
+    var STORE = {start: null, end: null, data: {}};
     var firstViewMessageId = null;
     if (window.location.protocol === 'http:') {
         new_uri = "ws:"+uri;
@@ -34,16 +36,16 @@ export function initWebsockets(callback) {
         const message = JSON.parse(evt.data);
         if (message.name === 'DATA_UPDATE') {
           const data = message.params;
-          STORE[data.source] = (STORE[data.source] || []).concat(data);
+          STORE.data[data.source] = (STORE.data[data.source] || []).concat(data);
           callback(Object.assign({}, STORE));
         } else if (message.name === 'GET_DATA_RESULT') {
           console.log("GET_DATA_RESULT");
           console.log(message);
-          STORE = message.params.reduce((acc, v) => {
+          STORE.data = message.params.reduce((acc, v) => {
             acc[v.source] = (acc[v.source] || []).concat(v);
             return acc;
           }, {});
-          callback(STORE);
+          callback(Object.assign({}, STORE));
           if (message.messageId === firstViewMessageId) {
             console.log("RECIEVED THE FIRST VIEW!!!")
             console.log("fetching new data now...")
@@ -56,10 +58,13 @@ export function initWebsockets(callback) {
                 return acc.concat(v.sources)
               }, []).filter((v, i, a) => a.indexOf(v) === i);
               getData({
-                start: view.start,
-                end: view.end,
+                start: moment.utc(view.start).toISOString(),
+                end: moment.utc(view.end).toISOString(),
                 sources: sources
-              })
+              });
+              STORE.start = view.start ? moment.utc(view.start).toDate() : null;
+              STORE.end = view.end ? moment.utc(view.end).toDate() : null;
+              callback(Object.assign({}, STORE));
             } else {
               // no previous view, default to getting everything
               getData();

@@ -10,8 +10,12 @@ import registerServiceWorker from './registerServiceWorker';
 import { initWebsockets } from './ws';
 
 
-function mainRender(list) {
-  ReactDOM.render(<App list={list} />, document.getElementById('root'));
+function mainRender(store) {
+  store = store || {};
+  ReactDOM.render(
+    <App list={store.data} start={store.start} end={store.end} />,
+    document.getElementById('root')
+  );
 }
 mainRender();
 initWebsockets(mainRender);
