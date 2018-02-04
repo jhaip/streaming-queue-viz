@@ -52,10 +52,11 @@ export function initWebsockets(_callback) {
         } else if (message.name === 'GET_DATA_RESULT') {
           console.log("GET_DATA_RESULT");
           console.log(message);
-          STORE.data = message.params.reduce((acc, v) => {
-            acc[v.source] = (acc[v.source] || []).concat(v);
-            return acc;
-          }, {});
+          STORE.data = Object.assign({}, STORE.data, {
+            [message.params.requestParams.source]: message.params.results.reduce((acc, v) => {
+              return acc.concat(v)
+            }, [])
+          })
           if (message.messageId === STORE.loading.messageId) {
             STORE.loading = {status: false, messageId: null};
           }
@@ -63,7 +64,7 @@ export function initWebsockets(_callback) {
           if (message.messageId === firstViewMessageId) {
             console.log("RECIEVED THE FIRST VIEW!!!")
             console.log("fetching new data now...")
-            const data = message.params;
+            const data = message.params.results;
             if (data && data.length > 0) {
               const view = JSON.parse(data[0].value);
               console.log("LAST VIEW DESCRIPTION:");
@@ -74,10 +75,13 @@ export function initWebsockets(_callback) {
               STORE.start = view.start ? moment.utc(view.start).toDate() : null;
               STORE.end = view.end ? moment.utc(view.end).toDate() : null;
               STORE.sources = sources;
-              getData({
-                start: STORE.start,
-                end: STORE.end,
-                sources: STORE.sources
+              getCode();
+              STORE.sources.filter(s => s !== "code").forEach(source => {
+                getData({
+                  start: STORE.start,
+                  end: STORE.end,
+                  source: source
+                });
               });
               callback(Object.assign({}, STORE));
             } else {
@@ -115,10 +119,12 @@ export function saveView(view) {
     messageId: guid(),
     params: view
   }));
-  getData({
-    start: view.start ? moment.utc(view.start).toDate() : null,
-    end: view.end ? moment.utc(view.end).toDate() : null,
-    sources: STORE.sources
+  STORE.sources.filter(s => s !== "code").forEach(source => {
+    getData({
+      start: view.start ? moment.utc(view.start).toDate() : null,
+      end: view.end ? moment.utc(view.end).toDate() : null,
+      source: source
+    });
   });
 }
 
@@ -133,6 +139,12 @@ export function getLastView() {
     }
   }));
   return firstViewMessageId;
+}
+
+export function getCode() {
+  return getData({
+    "source": "code"
+  })
 }
 
 export function getData(params) {

@@ -7,7 +7,9 @@ import Timeline from './Timeline';
 import SerialDataView from './DataViews/SerialDataView'
 import CodeDataView from './DataViews/CodeDataView'
 import DerivativeDataView from './DataViews/DerivativeDataView'
+import moment from 'moment'
 import { saveView } from './ws'
+
 
 class App extends Component {
   constructor(props) {
@@ -39,8 +41,8 @@ class App extends Component {
     if (prevState.start != this.state.start ||
         prevState.end != this.state.end) {
       const view = {
-        start: this.state.start,
-        end: this.state.end,
+        start: this.state.start ? moment.utc(this.state.start).toISOString() : null,
+        end: this.state.end ? moment.utc(this.state.end).toISOString() : null,
         subviews: [
           {
             sources: ["serial"],

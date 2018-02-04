@@ -84,25 +84,53 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
                     data_limit = json_data["params"].get("limit")
                     data_start = json_data["params"].get("start")
                     data_end = json_data["params"].get("end")
-                    if data_source == 'view' and data_limit == 1:
-                        sql_query = "SELECT * FROM data WHERE source = 'view' ORDER BY datetime(timestamp) DESC LIMIT 1"
-                    if data_start and data_end:
-                        sql_query = "SELECT * FROM data WHERE datetime(timestamp) >= datetime(?) AND datetime(timestamp) <= datetime(?)"
-                        sql_params = (data_start, data_end,)
+                    if data_start:
+                        if data_end:
+                            sql_query = "SELECT * FROM data WHERE datetime(timestamp) >= datetime(?) AND datetime(timestamp) <= datetime(?)"
+                            sql_params = [data_start, data_end]
+                        else:
+                            sql_query = "SELECT * FROM data WHERE datetime(timestamp) >= datetime(?)"
+                            sql_params = [data_start]
+                    elif data_end:
+                        sql_query = "SELECT * FROM data WHERE datetime(timestamp) <= datetime(?)"
+                        sql_params = [data_end]
+                    if data_source:
+                        if data_start or data_end:
+                            sql_query += " AND"
+                        else:
+                            sql_query += " WHERE"
+                        sql_query += " source = ?"
+                        sql_params = sql_params + [data_source]
+                    if data_source == "view":
+                        # HACK TO GET THE MOST RECENT VIEW
+                        # BUT NORMALLY THE FRONTEND EXPECTS RESULTS TO BE IN ASC ORDER
+                        # THE FRONTEND SHOULD PROBABLY BE SMARTER
+                        sql_query += " ORDER BY datetime(timestamp) DESC"
+                    else:
+                        sql_query += " ORDER BY datetime(timestamp) ASC"
+                    if data_limit:
+                        sql_query += " LIMIT ?"
+                        sql_params = sql_params + [int(data_limit)]
+                    logging.info(sql_query)
+                    logging.info(sql_params)
+
                 for row in db_c.execute(sql_query, sql_params):
-                    logging.info("ROW")
-                    logging.info(row)
+                    # logging.info("ROW")
+                    # logging.info(row)
                     results.append({
                         "timestamp": row[0],
                         "value": row[1],
                         "source": row[2]
                     })
-                logging.info("returning results")
-                logging.info(results)
+                # logging.info("returning results")
+                # logging.info(results)
                 response = {
                     "name": "GET_DATA_RESULT",
                     "messageId": json_data.get("messageId"),
-                    "params": results
+                    "params": {
+                        "results": results,
+                        "requestParams": json_data["params"]
+                    }
                 }
                 self.write_message(json.dumps(response))
                 db_conn.close()

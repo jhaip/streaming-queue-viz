@@ -149,11 +149,11 @@ class Timeline extends Component {
       <div style={{margin: '20px auto'}}>
         <div style={{margin: '10px'}}>
           <strong>
-            {this.props.start ? this.props.start.toString() : 'Beginning'}
+            {this.props.start ? moment.utc(this.props.start).toISOString() : 'Beginning'}
           </strong>
           {` - `}
           <strong>
-            {this.props.end ? this.props.end.toString() : 'Now'}
+            {this.props.end ? moment.utc(this.props.end).toISOString() : 'Now'}
           </strong>
         </div>
         <div className="TimelineContainer">
