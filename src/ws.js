@@ -1,12 +1,23 @@
 import moment from 'moment'
 
-export function initWebsockets(callback) {
+var STORE = {
+  start: null,
+  end: null,
+  data: {},
+  loading: {
+    status: false,
+    messageId: null
+  }
+};
+var callback = null;
+
+export function initWebsockets(_callback) {
   // document.addEventListener('DOMContentLoaded', function(){
     console.log("initWebsockets");
     var uri= window.location.host + window.location.pathname + 'ws';
     var new_uri;
-    var STORE = {start: null, end: null, data: {}};
     var firstViewMessageId = null;
+    callback = _callback;
     if (window.location.protocol === 'http:') {
         new_uri = "ws:"+uri;
      } else {
@@ -45,6 +56,9 @@ export function initWebsockets(callback) {
             acc[v.source] = (acc[v.source] || []).concat(v);
             return acc;
           }, {});
+          if (message.messageId === STORE.loading.messageId) {
+            STORE.loading = {status: false, messageId: null};
+          }
           callback(Object.assign({}, STORE));
           if (message.messageId === firstViewMessageId) {
             console.log("RECIEVED THE FIRST VIEW!!!")
@@ -57,13 +71,14 @@ export function initWebsockets(callback) {
               const sources = view.subviews.reduce((acc, v) => {
                 return acc.concat(v.sources)
               }, []).filter((v, i, a) => a.indexOf(v) === i);
-              getData({
-                start: moment.utc(view.start).toISOString(),
-                end: moment.utc(view.end).toISOString(),
-                sources: sources
-              });
               STORE.start = view.start ? moment.utc(view.start).toDate() : null;
               STORE.end = view.end ? moment.utc(view.end).toDate() : null;
+              STORE.sources = sources;
+              getData({
+                start: STORE.start,
+                end: STORE.end,
+                sources: STORE.sources
+              });
               callback(Object.assign({}, STORE));
             } else {
               // no previous view, default to getting everything
@@ -100,6 +115,11 @@ export function saveView(view) {
     messageId: guid(),
     params: view
   }));
+  getData({
+    start: view.start ? moment.utc(view.start).toDate() : null,
+    end: view.end ? moment.utc(view.end).toDate() : null,
+    sources: STORE.sources
+  });
 }
 
 export function getLastView() {
@@ -120,9 +140,17 @@ export function getData(params) {
     console.error("websockets is not defined!");
     return;
   }
+  const newGuid = guid();
+  STORE = Object.assign({}, STORE, {
+    loading: {
+      status: true,
+      messageId: newGuid
+    }
+  });
+  if (callback) callback(STORE);
   ws.send(JSON.stringify({
     name: "GET_DATA",
-    messageId: guid(),
+    messageId: newGuid,
     params: params || {}
   }));
 }

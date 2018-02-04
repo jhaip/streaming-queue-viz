@@ -13,7 +13,7 @@ import { initWebsockets } from './ws';
 function mainRender(store) {
   store = store || {};
   ReactDOM.render(
-    <App list={store.data} start={store.start} end={store.end} />,
+    <App list={store.data} start={store.start} end={store.end} loading={store.loading} />,
     document.getElementById('root')
   );
 }

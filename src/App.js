@@ -70,6 +70,13 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        { this.props.loading && this.props.loading.status &&
+          <strong
+            style={{position: 'absolute', top: 0, left: 0}}
+          >
+            Loading
+          </strong >
+        }
         <Timeline
           data={((this.props.list || [])["code"] || [])}
           onClick={this.onTimelineSelection}
