@@ -16,9 +16,28 @@ class App extends Component {
     super(props);
     this.state = {
       start: props.start,
-      end: props.end
+      end: props.end,
+      subviewsChanged: false,
+      subviews: [
+        {
+          sources: ["serial"],
+          type: "",
+          func: null
+        },
+        {
+          sources: ["serial"],
+          type: "",
+          func: null
+        },
+        {
+          sources: ["code"],
+          type: "code",
+          func: null
+        }
+      ]
     };
     this.onTimelineSelection = this.onTimelineSelection.bind(this);
+    this.dataViewDerivativeFuncChange = this.dataViewDerivativeFuncChange.bind(this);
   }
   componentWillReceiveProps(nextProps) {
     if (
@@ -37,29 +56,31 @@ class App extends Component {
       end: (typeof d.end !== 'undefined') ? d.end : this.state.end
     })
   }
+  dataViewDerivativeFuncChange(viewNumber, derivativeFunc) {
+    console.log("dataViewDerivativeFuncChange");
+    this.setState((prevState, props) => {
+      let newSubviews = prevState.subviews.slice(0);
+      newSubviews[viewNumber].func = derivativeFunc;
+      console.log(newSubviews);
+      return {
+        subviews: newSubviews,
+        subviewsChanged: true
+      };
+    })
+  }
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.start != this.state.start ||
-        prevState.end != this.state.end) {
+    if (
+      prevState.start != this.state.start ||
+      prevState.end != this.state.end ||
+      (!prevState.subviewsChanged && this.state.subviewsChanged)
+    ) {
+      this.setState({
+        subviewsChanged: false
+      });
       const view = {
         start: this.state.start ? moment.utc(this.state.start).toISOString() : null,
         end: this.state.end ? moment.utc(this.state.end).toISOString() : null,
-        subviews: [
-          {
-            sources: ["serial"],
-            type: "",
-            func: null
-          },
-          {
-            sources: ["serial"],
-            type: "",
-            func: null
-          },
-          {
-            sources: ["code"],
-            type: "code",
-            func: null
-          }
-        ]
+        subviews: this.state.subviews
       }
       console.log("NEW VIEW");
       console.log(view);
@@ -86,15 +107,17 @@ class App extends Component {
           end={this.state.end}
         />
         <div style={{display: 'flex'}}>
-          <SerialDataView
+          <DerivativeDataView
             data={((this.props.list || [])["serial"] || [])}
             start={this.state.start}
             end={this.state.end}
+            onCodeChange={(code) => this.dataViewDerivativeFuncChange(0, code)}
           />
           <DerivativeDataView
             data={((this.props.list || [])["serial"] || [])}
             start={this.state.start}
             end={this.state.end}
+            onCodeChange={(code) => this.dataViewDerivativeFuncChange(1, code)}
           />
           <CodeDataView
             data={((this.props.list || [])["code"] || [])}

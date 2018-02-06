@@ -119,13 +119,18 @@ export function saveView(view) {
     messageId: guid(),
     params: view
   }));
-  STORE.sources.filter(s => s !== "code").forEach(source => {
-    getData({
-      start: view.start ? moment.utc(view.start).toDate() : null,
-      end: view.end ? moment.utc(view.end).toDate() : null,
-      source: source
+  if (
+    STORE.start !== view.start ||
+    STORE.end !== view.end
+  ) {
+    STORE.sources.filter(s => s !== "code").forEach(source => {
+      getData({
+        start: view.start ? moment.utc(view.start).toDate() : null,
+        end: view.end ? moment.utc(view.end).toDate() : null,
+        source: source
+      });
     });
-  });
+  }
 }
 
 export function getLastView() {

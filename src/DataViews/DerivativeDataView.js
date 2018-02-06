@@ -6,6 +6,7 @@ import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/javascript/javascript'
 
 function evaluate(data, code) {
+  if (!code) return data;
   return eval(code);
 }
 
@@ -34,7 +35,7 @@ class DerivativeDataView extends Component {
     this.state = {
       code: '',
       derivative_data: [],
-      showCodeEditor: true
+      showCodeEditor: false
     };
     this.update = this.update.bind(this);
     this.run = this.run.bind(this);
@@ -42,6 +43,7 @@ class DerivativeDataView extends Component {
   }
   update(val) {
     this.setState({'code': val});
+    this.props.onCodeChange(val);
   }
   run(nextData) {
     const val = (typeof nextData !== 'undefined')
