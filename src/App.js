@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import './App.css';
 import ListItem from './ListItem'
 import CodeListItem from './CodeListItem'
@@ -8,7 +10,7 @@ import SerialDataView from './DataViews/SerialDataView'
 import CodeDataView from './DataViews/CodeDataView'
 import DerivativeDataView from './DataViews/DerivativeDataView'
 import moment from 'moment'
-import { saveView } from './ws'
+import { saveView } from './actions'
 
 
 class App extends Component {
@@ -84,7 +86,7 @@ class App extends Component {
       }
       console.log("NEW VIEW");
       console.log(view);
-      saveView(view);
+      this.props.saveView(view);
     }
   }
   componentDidMount() {
@@ -129,5 +131,26 @@ class App extends Component {
     );
   }
 }
+App.propTypes = {
+  start: PropTypes.object,
+  end: PropTypes.object,
+  loading: PropTypes.object,
+  list: PropTypes.object
+}
 
-export default App;
+function mapStateToProps(state) {
+  return {
+    start: state.start,
+    end: state.end,
+    loading: state.loading,
+    list: state.data
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    saveView: (view) => dispatch(saveView(view)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

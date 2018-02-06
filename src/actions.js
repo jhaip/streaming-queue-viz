@@ -11,9 +11,9 @@ function guid() {
 }
 
 export const GET_LAST_VIEW = 'GET_DATA';
-function getLastView() {
+export function getLastView() {
   const firstViewMessageId = guid();
-  ws.send(JSON.stringify({
+  window.ws.send(JSON.stringify({
     name: "GET_DATA",
     messageId: firstViewMessageId,
     params: {
@@ -28,8 +28,8 @@ function getLastView() {
 }
 
 export const SAVE_DATA = 'SAVE_DATA';
-function saveData(data) {
-  ws.send(JSON.stringify({
+export function saveData(data) {
+  window.ws.send(JSON.stringify({
     name: "SAVE_DATA",
     messageId: guid(),
     params: data
@@ -41,20 +41,21 @@ function saveData(data) {
 }
 
 export const GET_DATA = 'GET_DATA';
-function getData(params) {
-  ws.send(JSON.stringify({
+export function getData(params) {
+  const newGuid = guid();
+  window.ws.send(JSON.stringify({
     name: "GET_DATA",
     messageId: newGuid,
     params: params || {}
   }));
   return {
-    type: REQUEST_DATA,
+    type: GET_DATA,
     params
   }
 }
 
 export const SAVE_VIEW = 'SAVE_VIEW';
-function saveView(view) {
+export function saveView(view) {
   return (dispatch, getState) => {
     dispatch(saveData(view));
     if (
@@ -73,7 +74,7 @@ function saveView(view) {
 }
 
 export const RECEIVE_DATA = 'RECEIVE_DATA';
-function receiveData(params) {
+function receiveData(message) {
   return {
     type: RECEIVE_DATA,
     message
@@ -81,17 +82,49 @@ function receiveData(params) {
 }
 
 export const RECEIVE_LAST_VIEW = 'RECEIVE_LAST_VIEW';
-function receiveLastView(params) {
+function receiveLastView(view) {
   return {
     type: RECEIVE_LAST_VIEW,
-    message
+    view
   }
 }
 
 export const DATA_UPDATE = 'DATA_UPDATE';
-function dataUpdate(params) {
+function dataUpdate(message) {
   return {
     type: DATA_UPDATE,
     message
+  }
+}
+
+export function receiveWebsocketMessage(message) {
+  return (dispatch, getState) => {
+    if (message.name === 'DATA_UPDATE') {
+      dispatch(dataUpdate(message));
+    } else if (message.name === 'GET_DATA_RESULT') {
+      dispatch(receiveData(message));
+      if (message.messageId === getState().firstViewMessageId) {
+        console.log("RECIEVED THE FIRST VIEW!!!")
+        console.log("fetching new data now...")
+        const data = message.params.results;
+        if (data && data.length > 0) {
+          const view = JSON.parse(data[0].value);
+          console.log("LAST VIEW DESCRIPTION:");
+          console.log(view);
+          dispatch(receiveLastView(view));
+          dispatch(getData({"source": "code"}));
+          getState().sources.filter(s => s !== "code").forEach(source => {
+            dispatch(getData({
+              start: getState().start,
+              end: getState().end,
+              source: source
+            }));
+          });
+        } else {
+          // no previous view, default to getting everything
+          dispatch(getData());
+        }
+      }
+    }
   }
 }

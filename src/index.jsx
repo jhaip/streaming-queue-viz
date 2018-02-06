@@ -29,5 +29,5 @@ ReactDOM.render(
 //   );
 // }
 // mainRender();
-initWebsockets();
+initWebsockets(store);
 registerServiceWorker();
