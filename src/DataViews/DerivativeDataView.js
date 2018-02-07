@@ -33,7 +33,6 @@ class DerivativeDataView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      code: '',
       derivative_data: [],
       showCodeEditor: false
     };
@@ -42,7 +41,6 @@ class DerivativeDataView extends Component {
     this.toggleCode = this.toggleCode.bind(this);
   }
   update(val) {
-    this.setState({'code': val});
     this.props.onCodeChange(val);
   }
   run(nextData) {
@@ -50,7 +48,7 @@ class DerivativeDataView extends Component {
       ? nextData
       : this.props.data;
     this.setState({
-      derivative_data: evaluate(val, this.state.code)
+      derivative_data: evaluate(val, this.props.code)
     });
   }
   toggleCode() {
@@ -59,7 +57,7 @@ class DerivativeDataView extends Component {
     })
   }
   componentWillReceiveProps(nextProps) {
-    if (typeof nextProps.data !== 'undefined' && this.state.code !== '') {
+    if (typeof nextProps.data !== 'undefined' && nextProps.code !== '') {
       this.run(nextProps.data);
     }
   }
@@ -101,7 +99,7 @@ class DerivativeDataView extends Component {
           </div>
           { this.state.showCodeEditor &&
             <CodeMirror
-              value={this.state.code}
+              value={this.props.code}
               onBeforeChange={(editor, data, value) => {
                 this.update(value);
               }}

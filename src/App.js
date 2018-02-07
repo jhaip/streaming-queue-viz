@@ -10,87 +10,47 @@ import SerialDataView from './DataViews/SerialDataView'
 import CodeDataView from './DataViews/CodeDataView'
 import DerivativeDataView from './DataViews/DerivativeDataView'
 import moment from 'moment'
-import { saveView } from './actions'
+import { updateViewTime, dataViewDerivativeFuncChange } from './actions'
 
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      start: props.start,
-      end: props.end,
-      subviewsChanged: false,
-      subviews: [
-        {
-          sources: ["serial"],
-          type: "",
-          func: null
-        },
-        {
-          sources: ["serial"],
-          type: "",
-          func: null
-        },
-        {
-          sources: ["code"],
-          type: "code",
-          func: null
-        }
-      ]
-    };
     this.onTimelineSelection = this.onTimelineSelection.bind(this);
-    this.dataViewDerivativeFuncChange = this.dataViewDerivativeFuncChange.bind(this);
-  }
-  componentWillReceiveProps(nextProps) {
-    if (
-      this.props.start !== nextProps.start ||
-      this.props.end !== nextProps.end
-    ) {
-      this.setState({
-        start: nextProps.start,
-        end: nextProps.end
-      });
-    }
   }
   onTimelineSelection(d) {
-    this.setState({
-      start: (typeof d.start !== 'undefined') ? d.start : this.state.start,
-      end: (typeof d.end !== 'undefined') ? d.end : this.state.end
-    })
-  }
-  dataViewDerivativeFuncChange(viewNumber, derivativeFunc) {
-    console.log("dataViewDerivativeFuncChange");
-    this.setState((prevState, props) => {
-      let newSubviews = prevState.subviews.slice(0);
-      newSubviews[viewNumber].func = derivativeFunc;
-      console.log(newSubviews);
-      return {
-        subviews: newSubviews,
-        subviewsChanged: true
-      };
-    })
-  }
-  componentDidUpdate(prevProps, prevState) {
-    if (
-      prevState.start != this.state.start ||
-      prevState.end != this.state.end ||
-      (!prevState.subviewsChanged && this.state.subviewsChanged)
-    ) {
-      this.setState({
-        subviewsChanged: false
-      });
-      const view = {
-        start: this.state.start ? moment.utc(this.state.start).toISOString() : null,
-        end: this.state.end ? moment.utc(this.state.end).toISOString() : null,
-        subviews: this.state.subviews
-      }
-      console.log("NEW VIEW");
-      console.log(view);
-      this.props.saveView(view);
-    }
+    console.log("onTimelineSelection");
+    console.log(d);
+    this.props.updateViewTime(
+      (typeof d.start !== 'undefined') ? d.start : this.props.start,
+      (typeof d.end !== 'undefined') ? d.end : this.props.end
+    )
   }
   componentDidMount() {
     window.LineDiff = LineDiff;
+  }
+  getSubviews() {
+    return this.props.subviews && this.props.subviews.map((v, i) => {
+      const sourceName = v.sources[0];
+      if (v.type === "code") {
+        return (
+          <CodeDataView
+            data={((this.props.list || [])[sourceName] || [])}
+            start={this.props.start}
+            end={this.props.end}
+          />
+        );
+      }
+      return (
+        <DerivativeDataView
+          data={((this.props.list || [])[sourceName] || [])}
+          start={this.props.start}
+          end={this.props.end}
+          code={v.func}
+          onCodeChange={(code) => this.props.dataViewDerivativeFuncChange(i, code)}
+        />
+      );
+    })
   }
   render() {
     return (
@@ -105,27 +65,11 @@ class App extends Component {
         <Timeline
           data={((this.props.list || [])["code"] || [])}
           onClick={this.onTimelineSelection}
-          start={this.state.start}
-          end={this.state.end}
+          start={this.props.start}
+          end={this.props.end}
         />
         <div style={{display: 'flex'}}>
-          <DerivativeDataView
-            data={((this.props.list || [])["serial"] || [])}
-            start={this.state.start}
-            end={this.state.end}
-            onCodeChange={(code) => this.dataViewDerivativeFuncChange(0, code)}
-          />
-          <DerivativeDataView
-            data={((this.props.list || [])["serial"] || [])}
-            start={this.state.start}
-            end={this.state.end}
-            onCodeChange={(code) => this.dataViewDerivativeFuncChange(1, code)}
-          />
-          <CodeDataView
-            data={((this.props.list || [])["code"] || [])}
-            start={this.state.start}
-            end={this.state.end}
-          />
+          {this.getSubviews()}
         </div>
       </div>
     );
@@ -134,14 +78,16 @@ class App extends Component {
 App.propTypes = {
   start: PropTypes.object,
   end: PropTypes.object,
+  subviews: PropTypes.array,
   loading: PropTypes.object,
   list: PropTypes.object
 }
 
 function mapStateToProps(state) {
   return {
-    start: state.start,
-    end: state.end,
+    start: state.view.start,
+    end: state.view.end,
+    subviews: state.view.subviews || [],
     loading: state.loading,
     list: state.data
   }
@@ -149,7 +95,10 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = dispatch => {
   return {
-    saveView: (view) => dispatch(saveView(view)),
+    updateViewTime: (start, end) =>
+      dispatch(updateViewTime(start, end)),
+    dataViewDerivativeFuncChange: (viewNumber, derivativeFunc) =>
+      dispatch(dataViewDerivativeFuncChange(viewNumber, derivativeFunc))
   }
 }
 

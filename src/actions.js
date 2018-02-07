@@ -54,22 +54,65 @@ export function getData(params) {
   }
 }
 
-export const SAVE_VIEW = 'SAVE_VIEW';
-export function saveView(view) {
+export const RECEIVE_VIEW_UPDATE = 'RECEIVE_VIEW_UPDATE';
+function receiveViewUpdate(view) {
+  console.log("receiveViewUpdate");
+  return {
+    type: RECEIVE_VIEW_UPDATE,
+    view
+  }
+}
+
+export function updateViewTime(start, end) {
   return (dispatch, getState) => {
-    dispatch(saveData(view));
+    const state = getState();
     if (
-      getState().start !== view.start ||
-      getState().end !== view.end
+      state.view.start !== start ||
+      state.view.end !== end
     ) {
-      getState().sources.filter(s => s !== "code").forEach(source => {
+      const view = {
+        start: start ? moment.utc(start).toDate() : null,
+        end: end ? moment.utc(end).toDate() : null,
+        subviews: state.view.subviews
+      }
+      console.log("updateViewTime");
+      console.log(start);
+      console.log(end);
+      console.log(view);
+      dispatch(receiveViewUpdate(view));
+      dispatch(saveData({
+        start: start ? moment.utc(start).toISOString() : null,
+        end: end ? moment.utc(end).toISOString() : null,
+        subviews: state.view.subviews
+      }));
+      state.sources.filter(s => s !== "code").forEach(source => {
         dispatch(getData({
-          start: view.start ? moment.utc(view.start).toDate() : null,
-          end: view.end ? moment.utc(view.end).toDate() : null,
+          start: start ? moment.utc(start).toDate() : null,
+          end: end ? moment.utc(end).toDate() : null,
           source: source
         }));
       });
     }
+  }
+}
+
+export function dataViewDerivativeFuncChange(viewNumber, derivativeFunc) {
+  return (dispatch, getState) => {
+    const state = getState();
+    const subviewsCopy = state.view.subviews.slice(0);
+    subviewsCopy[viewNumber].func = derivativeFunc;
+    const view = {
+      start: state.view.start,
+      end: state.view.end,
+      subviews: subviewsCopy
+    }
+    console.log("dataViewDerivativeFuncChange");
+    dispatch(receiveViewUpdate(view));
+    dispatch(saveData({
+      start: state.view.start ? state.view.start.toISOString() : null,
+      end: state.view.end ? state.view.end.toISOString() : null,
+      subviews: subviewsCopy
+    }));
   }
 }
 

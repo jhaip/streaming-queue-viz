@@ -3,15 +3,18 @@ import {
   GET_LAST_VIEW,
   SAVE_DATA,
   GET_DATA,
-  SAVE_VIEW,
+  RECEIVE_VIEW_UPDATE,
   RECEIVE_DATA,
   RECEIVE_LAST_VIEW,
   DATA_UPDATE
 } from './actions'
 
 const initialState = {
-  start: null,
-  end: null,
+  view: {
+    start: null,
+    end: null,
+    subviews: null
+  },
   data: {},
   loading: {
     status: false,
@@ -30,8 +33,10 @@ function rootReducer(state = initialState, action) {
       return state
     case GET_DATA:
       return state
-    case SAVE_VIEW:
-      return state
+    case RECEIVE_VIEW_UPDATE:
+      return Object.assign({}, state, {
+        view: action.view
+      })
     case RECEIVE_DATA:
       const params = action.message.params;
       return Object.assign({}, state, {
@@ -49,10 +54,13 @@ function rootReducer(state = initialState, action) {
         return acc.concat(v.sources)
       }, []).filter((v, i, a) => a.indexOf(v) === i);
       return Object.assign({}, state, {
-        start: action.view.start ? moment.utc(action.view.start).toDate() : null,
-        end: action.view.end ? moment.utc(action.view.end).toDate() : null,
+        view: {
+          start: action.view.start ? moment.utc(action.view.start).toDate() : null,
+          end: action.view.end ? moment.utc(action.view.end).toDate() : null,
+          subviews: action.view.subviews
+        },
         sources
-      })
+      });
     case DATA_UPDATE:
       const data = action.message.params;
       const stateCopy = Object.assign({}, state);
