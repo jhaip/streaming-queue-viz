@@ -5,6 +5,10 @@ import {Controlled as CodeMirror} from 'react-codemirror2'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/javascript/javascript'
 
+import 'react-virtualized/styles.css'
+import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer'
+import List from 'react-virtualized/dist/commonjs/List'
+
 function evaluate(data, code) {
   if (!code) return data;
   return eval(code);
@@ -34,11 +38,16 @@ class DerivativeDataView extends Component {
     super(props);
     this.state = {
       derivative_data: [],
-      showCodeEditor: false
+      showCodeEditor: false,
+      scrollToIndex: 0,
+      rowCount: 0
     };
     this.update = this.update.bind(this);
     this.run = this.run.bind(this);
     this.toggleCode = this.toggleCode.bind(this);
+    this.renderList = this.renderList.bind(this);
+    this._noRowsRenderer = this._noRowsRenderer.bind(this);
+    this._rowRenderer = this._rowRenderer.bind(this);
   }
   update(val) {
     this.props.onCodeChange(val);
@@ -47,8 +56,14 @@ class DerivativeDataView extends Component {
     const val = (typeof nextData !== 'undefined')
       ? nextData
       : this.props.data;
+    const filteredDerivedData = evaluate(val, this.props.code).filter(x =>
+      (this.props.start === null || new Date(x.timestamp) >= this.props.start) &&
+      (this.props.end === null || new Date(x.timestamp) < this.props.end)
+    );
     this.setState({
-      derivative_data: evaluate(val, this.props.code)
+      derivative_data: filteredDerivedData,
+      rowCount: filteredDerivedData.length,
+      scrollToIndex: filteredDerivedData.length-1,
     });
   }
   toggleCode() {
@@ -62,28 +77,56 @@ class DerivativeDataView extends Component {
     }
   }
   scrollToBottom() {
-    this.messagesEnd.scrollIntoView();
+    this.setState((prevState, props) => {
+      scrollToIndex: this.state.rowCount-1
+    });
   }
   componentDidMount() {
     this.scrollToBottom();
   }
-  componentDidUpdate() {
-    this.scrollToBottom();
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.rowCount !== this.state.rowCount) {
+      this.scrollToBottom();
+    }
   }
-  render() {
-    const listItems = this.state.derivative_data.filter(x =>
-      (this.props.start === null || new Date(x.timestamp) >= this.props.start) &&
-      (this.props.end === null || new Date(x.timestamp) < this.props.end)
-    ).map(datum =>
-      <div key={datum.timestamp} className="Item">
+  _noRowsRenderer() {
+    return <div style={{marginTop: '40px', color: 'grey'}}>No results.</div>;
+  }
+  _rowRenderer({index, isScrolling, key, style}) {
+    const datum = this.state.derivative_data[index];
+    return (
+      <div className="Item" key={key} style={style}>
         <strong className="DateLabel">{`(${datum.timestamp})`}</strong>
         <div className="Value" dangerouslySetInnerHTML={{__html: datum.value}} />
       </div>
     );
+  }
+  renderList() {
+    return (
+      <AutoSizer disableHeight>
+        {({width}) => (
+          <List
+            ref="List"
+            className="ScrollContainerData"
+            height={600}
+            overscanRowCount={10}
+            noRowsRenderer={this._noRowsRenderer}
+            rowCount={this.state.rowCount}
+            rowHeight={46}
+            rowRenderer={this._rowRenderer}
+            scrollToIndex={this.state.scrollToIndex}
+            width={width}
+            updateForcingProp={this.props.code}
+          />
+        )}
+      </AutoSizer>
+    );
+  }
+  render() {
     return (
       <div className="ScrollContainer" key="serial">
         <div
-          style={{borderBottom: '2px solid blue', position: 'absolute', background: 'white', width: '100%'}}
+          style={{borderBottom: '2px solid blue', position: 'absolute', background: 'white', width: '100%', zIndex: 10}}
         >
           <div>
             <button
@@ -110,12 +153,7 @@ class DerivativeDataView extends Component {
             />
           }
         </div>
-        <div className="ScrollContainerData">
-          {listItems}
-          <div style={{ float:"left", clear: "both" }}
-               ref={(el) => { this.messagesEnd = el; }}>
-          </div>
-        </div>
+        {this.renderList()}
       </div>
     );
   }
