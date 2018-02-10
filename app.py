@@ -137,7 +137,7 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
             elif json_data.get("name") == "SAVE_DATA":
                 save_data({
                     "value": json.dumps(json_data.get("params")),
-                    "source": "view"
+                    "source": json_data.get("source")
                 })
         except:
             logging.error("Unexpected error: %s" % sys.exc_info()[0])
