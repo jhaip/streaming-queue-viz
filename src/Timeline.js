@@ -136,6 +136,7 @@ class Timeline extends Component {
         }
         return (
           <div
+            key={label}
             className="TimeBlock"
             style={{flex: `0 0 ${p}%`}}
             onClick={() => this.props.onClick(d)}

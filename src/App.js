@@ -6,7 +6,6 @@ import ListItem from './ListItem'
 import CodeListItem from './CodeListItem'
 import LineDiff from 'line-diff';
 import Timeline from './Timeline';
-import SerialDataView from './DataViews/SerialDataView'
 import CodeDataView from './DataViews/CodeDataView'
 import DerivativeDataView from './DataViews/DerivativeDataView'
 import moment from 'moment'
@@ -35,6 +34,7 @@ class App extends Component {
       if (v.type === "code") {
         return (
           <CodeDataView
+            key={i}
             data={((this.props.list || [])[sourceName] || [])}
             start={this.props.start}
             end={this.props.end}
@@ -43,6 +43,7 @@ class App extends Component {
       }
       return (
         <DerivativeDataView
+          key={i}
           data={((this.props.list || [])[sourceName] || [])}
           start={this.props.start}
           end={this.props.end}

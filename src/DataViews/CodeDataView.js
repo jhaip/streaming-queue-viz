@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import '../App.css';
 import CodeListItem from '../CodeListItem'
 
-class SerialDataView extends Component {
+class CodeDataView extends Component {
   scrollToBottom() {
     this.messagesEnd.scrollIntoView();
   }
@@ -18,6 +18,7 @@ class SerialDataView extends Component {
       (this.props.end === null || new Date(x.timestamp) < this.props.end)
     ).map((x, i, a) =>
       <CodeListItem
+        key={i}
         datum={x}
         prevDatum={(i >= 1) ? a[i-1] : null}
       />
@@ -35,4 +36,4 @@ class SerialDataView extends Component {
   }
 }
 
-export default SerialDataView;
+export default CodeDataView;
