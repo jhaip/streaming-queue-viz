@@ -4,7 +4,7 @@ import ListItem from '../ListItem'
 import {Controlled as CodeMirror} from 'react-codemirror2'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/javascript/javascript'
-
+import moment from 'moment'
 import 'react-virtualized/styles.css'
 import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer'
 import List from 'react-virtualized/dist/commonjs/List'
@@ -71,7 +71,7 @@ class DerivativeDataView extends Component {
     const filteredDerivedData = evaluate(
       val,
       this.props.code,
-      this.props.start
+      this.props.start || this.props.end || moment.utc().toDate()
     ).filter(x =>
       (this.props.start === null || new Date(x.timestamp) >= this.props.start) &&
       (this.props.end === null || new Date(x.timestamp) < this.props.end)
