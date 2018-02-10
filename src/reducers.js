@@ -63,9 +63,12 @@ function rootReducer(state = initialState, action) {
       });
     case DATA_UPDATE:
       const data = action.message.params;
-      const stateCopy = Object.assign({}, state);
-      stateCopy.data[data.source] = (stateCopy.data[data.source] || []).concat(data);
-      return stateCopy;
+      const oldStateSourceData = (state.data[data.source] || []);
+      return Object.assign({}, state, {
+        data: Object.assign({}, state.data, {
+          [data.source]: oldStateSourceData.concat(data)
+        })
+      });
     default:
       return state
   }
