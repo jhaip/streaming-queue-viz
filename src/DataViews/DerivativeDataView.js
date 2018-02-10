@@ -9,9 +9,17 @@ import 'react-virtualized/styles.css'
 import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer'
 import List from 'react-virtualized/dist/commonjs/List'
 
-function evaluate(data, code) {
+function evaluate(data, code, timeOnError) {
   if (!code) return data;
-  return eval(code);
+  try {
+    return eval(code);
+  } catch (err) {
+    const errorData = {
+      timestamp: timeOnError.toISOString(),
+      value: `<div style="margin-top: 50px; color: #880000;">${err}</div>`
+    }
+    return [errorData, errorData];
+  }
 }
 
 /*
@@ -56,7 +64,11 @@ class DerivativeDataView extends Component {
     const val = (typeof nextData !== 'undefined')
       ? nextData
       : this.props.data;
-    const filteredDerivedData = evaluate(val, this.props.code).filter(x =>
+    const filteredDerivedData = evaluate(
+      val,
+      this.props.code,
+      this.props.start
+    ).filter(x =>
       (this.props.start === null || new Date(x.timestamp) >= this.props.start) &&
       (this.props.end === null || new Date(x.timestamp) < this.props.end)
     );
