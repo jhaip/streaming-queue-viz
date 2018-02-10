@@ -6,6 +6,7 @@ import ListItem from './ListItem'
 import CodeListItem from './CodeListItem'
 import LineDiff from 'line-diff';
 import Timeline from './Timeline';
+import Annotations from './Annotations';
 import CodeDataView from './DataViews/CodeDataView'
 import DerivativeDataView from './DataViews/DerivativeDataView'
 import moment from 'moment'
@@ -31,20 +32,23 @@ class App extends Component {
   getSubviews() {
     return this.props.subviews && this.props.subviews.map((v, i) => {
       const sourceName = v.sources[0];
+      const sourceData = ((this.props.list || [])[sourceName] || []);
       if (v.type === "code") {
         return (
           <CodeDataView
             key={i}
-            data={((this.props.list || [])[sourceName] || [])}
+            data={sourceData}
             start={this.props.start}
             end={this.props.end}
           />
         );
+      } else if (v.type === 'annotation') {
+        return <Annotations data={sourceData} key={i} />
       }
       return (
         <DerivativeDataView
           key={i}
-          data={((this.props.list || [])[sourceName] || [])}
+          data={sourceData}
           start={this.props.start}
           end={this.props.end}
           code={v.func}

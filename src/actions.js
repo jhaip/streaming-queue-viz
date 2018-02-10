@@ -28,11 +28,12 @@ export function getLastView() {
 }
 
 export const SAVE_DATA = 'SAVE_DATA';
-export function saveData(data) {
+export function saveData(source, data) {
   window.ws.send(JSON.stringify({
     name: "SAVE_DATA",
     messageId: guid(),
-    params: data
+    params: data,
+    source: source
   }));
   return {
     type: SAVE_DATA,
@@ -80,7 +81,7 @@ export function updateViewTime(start, end) {
       console.log(end);
       console.log(view);
       dispatch(receiveViewUpdate(view));
-      dispatch(saveData({
+      dispatch(saveData("view", {
         start: start ? moment.utc(start).toISOString() : null,
         end: end ? moment.utc(end).toISOString() : null,
         subviews: state.view.subviews
@@ -108,10 +109,18 @@ export function dataViewDerivativeFuncChange(viewNumber, derivativeFunc) {
     }
     console.log("dataViewDerivativeFuncChange");
     dispatch(receiveViewUpdate(view));
-    dispatch(saveData({
+    dispatch(saveData("view", {
       start: state.view.start ? state.view.start.toISOString() : null,
       end: state.view.end ? state.view.end.toISOString() : null,
       subviews: subviewsCopy
+    }));
+  }
+}
+
+export function saveAnnotation(text) {
+  return (dispatch, getState) => {
+    dispatch(saveData("annotation", {
+      annotation: text
     }));
   }
 }

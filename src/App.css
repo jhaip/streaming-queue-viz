@@ -16,3 +16,42 @@
     padding: 20px;
     margin: 10px;
 }
+
+.annotationsSidebar {
+    flex: 0 0 300px;
+    height: 600px;
+    border: 1px solid #EEE;
+    border-right: none;
+    margin-left: 5px;
+}
+
+.annoationsLayout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.annotationsList {
+    flex-grow: 1;
+    padding: 10px;
+    overflow-y: scroll;
+}
+
+.annotationsAdd {
+    padding: 10px;
+    border-top: 1px solid #EEE;
+    background-color: #EAEAEA;
+}
+.annotationsAdd textarea {
+    width: 100%;
+    height: 100px;
+    font-family: monospace;
+    font-size: 18px;
+    padding: 10px;
+}
+.annotationsAdd button {
+    width: 100%;
+    height: 30px;
+    margin-top: 10px;
+    font-size: 18px;
+}
