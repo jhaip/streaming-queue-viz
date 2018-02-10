@@ -18,6 +18,10 @@ function evaluate(data, code, timeOnError) {
       timestamp: timeOnError.toISOString(),
       value: `<div style="margin-top: 50px; color: #880000;">${err}</div>`
     }
+    // Using a hack way to show errors: return them like
+    // a normal data value at the beginning of the time range.
+    // Return two copies as a word-around of the data being
+    // hid behind the Data View toggle menu
     return [errorData, errorData];
   }
 }
