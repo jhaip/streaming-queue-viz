@@ -17,7 +17,7 @@
     text-align: left;
     display: block;
     font-family: monospace;
-    white-space: pre;
+    white-space: pre-wrap;
 }
 
 .CodeMirrorContainer {
