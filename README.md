@@ -18,3 +18,8 @@ Currently code changes are only set up to work with a CircuitPython that
 mounts itself to `/Volumes/CIRCUITPY` as this is where the Circuit Playground Express
 board mounts on my Mac. The scripts require that python be installed along with
 the libraries in the `circuitpython/requirements.txt` folder.
+
+## Serial Logging
+
+To automatically log and see serial logs, run `python circuitpython/serial_logger.py`
+as a background process or in an open terminal.
