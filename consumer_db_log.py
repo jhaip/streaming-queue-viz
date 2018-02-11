@@ -7,6 +7,7 @@ import time
 import signal
 import json
 import sqlite3
+import datetime
 import sys
 logging.basicConfig(level=logging.INFO)
 
@@ -26,8 +27,42 @@ def threaded_rmq():
     db_c.execute('''CREATE TABLE IF NOT EXISTS data
                  (timestamp text, value text, source text)''')
     db_conn.commit()
-    for row in db_c.execute('SELECT * FROM data'):
+    any_views = False
+    for row in db_c.execute("SELECT * FROM data WHERE source='view'"):
+        any_views = True
         logging.info(row)
+    if not any_views:
+        initial_view_params = {
+            "start": None,
+            "end": None,
+            "subviews": [
+                {
+                    "func": None,
+                    "type": "",
+                    "sources": ["serial"]
+                },
+                {
+                    "func": None,
+                    "type": "",
+                    "sources": ["serial"]
+                },
+                {
+                    "func": None,
+                    "type": "code",
+                    "sources": ["code"]
+                },
+                {
+                    "func": None,
+                    "type": "annotation",
+                    "sources": ["annotation"]
+                }
+            ]
+        }
+        data = (datetime.datetime.utcnow().isoformat(),
+                json.dumps(initial_view_params),
+                'view')
+        db_c.execute("INSERT INTO data VALUES (?,?,?)", data)
+        db_conn.commit()
 
     channel.exchange_declare(exchange='logs',
                              exchange_type='fanout')
