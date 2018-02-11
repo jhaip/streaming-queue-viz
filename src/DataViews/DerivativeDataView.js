@@ -10,7 +10,7 @@ import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer'
 import List from 'react-virtualized/dist/commonjs/List'
 
 function evaluate(data, code, timeOnError) {
-  if (!code) return data;
+  if (!code || !code.trim()) return data;
   try {
     return eval(code);
   } catch (err) {
@@ -73,8 +73,8 @@ class DerivativeDataView extends Component {
       this.props.code,
       this.props.start || this.props.end || moment.utc().toDate()
     ).filter(x =>
-      (this.props.start === null || new Date(x.timestamp) >= this.props.start) &&
-      (this.props.end === null || new Date(x.timestamp) < this.props.end)
+      (this.props.start === null || moment.utc(x.timestamp).toDate() >= moment.utc(this.props.start).toDate()) &&
+      (this.props.end === null || moment.utc(x.timestamp).toDate() < moment.utc(this.props.end).toDate())
     );
     this.setState({
       derivative_data: filteredDerivedData,
