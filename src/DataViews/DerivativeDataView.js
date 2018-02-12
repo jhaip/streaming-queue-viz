@@ -43,6 +43,15 @@ data.map(d => {
    	"value":  `<svg><rect width="${N*10}" height="100" style="fill:rgb(0,0,255)" /></svg>`
   }
 });
+
+data.map(d => {
+  const match = d.value.match(/\(([^,]+),/);
+  const val = match && match.length === 2 ? match[1] : "";
+  return {
+    "timestamp": d.timestamp,
+   	"value":  val
+  }
+});
 */
 
 class DerivativeDataView extends Component {
