@@ -14,8 +14,8 @@ class CodeDataView extends Component {
   }
   render() {
     const listItems = this.props.data.filter(x =>
-      (this.props.start === null || new Date(x.timestamp) >= this.props.start) &&
-      (this.props.end === null || new Date(x.timestamp) < this.props.end)
+      (this.props.start === null || moment.utc(x.timestamp).toDate() >= moment.utc(this.props.start).toDate()) &&
+      (this.props.end === null || moment.utc(x.timestamp).toDate() < moment.utc(this.props.end).toDate())
     ).map((x, i, a) =>
       <CodeListItem
         key={i}
