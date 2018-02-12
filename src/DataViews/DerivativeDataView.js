@@ -61,7 +61,8 @@ class DerivativeDataView extends Component {
       derivative_data: [],
       showCodeEditor: false,
       scrollToIndex: 0,
-      rowCount: 0
+      rowCount: 0,
+      scrollToBottom: true
     };
     this.update = this.update.bind(this);
     this.run = this.run.bind(this);
@@ -69,6 +70,7 @@ class DerivativeDataView extends Component {
     this.renderList = this.renderList.bind(this);
     this._noRowsRenderer = this._noRowsRenderer.bind(this);
     this._rowRenderer = this._rowRenderer.bind(this);
+    this.scrollToBottomChange = this.scrollToBottomChange.bind(this);
   }
   update(val) {
     this.props.onCodeChange(val);
@@ -94,6 +96,11 @@ class DerivativeDataView extends Component {
   toggleCode() {
     this.setState({
       showCodeEditor: !this.state.showCodeEditor
+    })
+  }
+  scrollToBottomChange() {
+    this.setState({
+      scrollToBottom: !this.state.scrollToBottom
     })
   }
   componentWillReceiveProps(nextProps) {
@@ -139,7 +146,7 @@ class DerivativeDataView extends Component {
             rowCount={this.state.rowCount}
             rowHeight={46}
             rowRenderer={this._rowRenderer}
-            scrollToIndex={this.state.scrollToIndex}
+            scrollToIndex={this.state.scrollToBottom ? this.state.scrollToIndex : undefined}
             width={width}
             updateForcingProp={this.props.code}
           />
@@ -164,6 +171,15 @@ class DerivativeDataView extends Component {
             >
               Toggle Code
             </button>
+            <label>
+              Watch:
+              <input
+                name="isFollowing"
+                type="checkbox"
+                checked={this.state.scrollToBottom}
+                onChange={this.scrollToBottomChange}
+              />
+            </label>
           </div>
           { this.state.showCodeEditor &&
             <CodeMirror
