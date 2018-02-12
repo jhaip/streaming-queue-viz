@@ -88,8 +88,8 @@ export function updateViewTime(start, end) {
       }));
       state.sources.filter(s => s !== "code").forEach(source => {
         dispatch(getData({
-          start: start ? moment.utc(start).toDate() : null,
-          end: end ? moment.utc(end).toDate() : null,
+          start: start ? moment.utc(start).toISOString() : null,
+          end: end ? moment.utc(end).toISOString() : null,
           source: source
         }));
       });
@@ -161,14 +161,13 @@ export function receiveWebsocketMessage(message) {
         const data = message.params.results;
         if (data && data.length > 0) {
           const view = JSON.parse(data[0].value);
-          console.log("LAST VIEW DESCRIPTION:");
-          console.log(view);
           dispatch(receiveLastView(view));
           dispatch(getData({"source": "code"}));
-          getState().sources.filter(s => s !== "code").forEach(source => {
+          const state = getState();
+          state.sources.filter(s => s !== "code").forEach(source => {
             dispatch(getData({
-              start: getState().start,
-              end: getState().end,
+              start: state.start ? moment.utc(state.start).toISOString() : null,
+              end: state.end ? moment.utc(state.end).toISOString() : null,
               source: source
             }));
           });
