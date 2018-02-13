@@ -6,6 +6,7 @@ import 'codemirror/mode/python/python'
 import 'codemirror/mode/diff/diff'
 import './ListItem.css';
 import LineDiff from 'line-diff';
+import moment from 'moment'
 
 class CodeListItem extends Component {
   constructor(props) {
@@ -48,9 +49,15 @@ class CodeListItem extends Component {
     });
   }
   render() {
+    const datum = this.props.datum;
     return (
-      <div key={this.props.datum.timestamp} className="Item">
-        <strong className="DateLabel">{`(${this.props.datum.timestamp})`}</strong>
+      <div key={datum.timestamp} className="Item">
+        <span className="DateLabel">
+          <span className="DateLabelDate">
+            {moment.utc(datum.timestamp).format("M/D")}
+          </span>
+          {moment.utc(datum.timestamp).format("HH:mm:ss")}
+        </span>
         <div className="CodeMirrorContainer">
           <strong>
             New Code Flashed

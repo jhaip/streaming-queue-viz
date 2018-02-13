@@ -36,7 +36,12 @@ class Annotations extends Component {
       const label = jsonData ? jsonData.annotation || '' : 'Parsing Error';
       return (
         <div className="Item" key={i}>
-          <strong className="DateLabel">{`(${datum.timestamp})`}</strong>
+          <span className="DateLabel">
+            <span className="DateLabelDate">
+              {moment.utc(datum.timestamp).format("M/D")}
+            </span>
+            {moment.utc(datum.timestamp).format("HH:mm:ss")}
+          </span>
           <div className="Value">
             {label}
           </div>

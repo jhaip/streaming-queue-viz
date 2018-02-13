@@ -147,7 +147,12 @@ class DerivativeDataView extends Component {
     const datum = this.state.derivative_data[index];
     return (
       <div className="Item" key={key} style={style}>
-        <strong className="DateLabel">{`(${datum.timestamp})`}</strong>
+        <span className="DateLabel">
+          <span className="DateLabelDate">
+            {moment.utc(datum.timestamp).format("M/D")}
+          </span>
+          {moment.utc(datum.timestamp).format("HH:mm:ss")}
+        </span>
         <div className="Value" dangerouslySetInnerHTML={{__html: datum.value}} />
       </div>
     );
@@ -164,7 +169,7 @@ class DerivativeDataView extends Component {
             overscanRowCount={10}
             noRowsRenderer={this._noRowsRenderer}
             rowCount={this.state.rowCount}
-            rowHeight={46}
+            rowHeight={28}
             rowRenderer={this._rowRenderer}
             scrollToIndex={this.state.scrollToBottom ? this.state.scrollToIndex : undefined}
             width={width}
