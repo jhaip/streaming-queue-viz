@@ -55,3 +55,14 @@
     margin-top: 10px;
     font-size: 18px;
 }
+
+button {
+    background-color: #EEE;
+    color: #333;
+    outline: none;
+    cursor: pointer;
+}
+.disabledButton {
+    background-color: white;
+    color: #999;
+}

@@ -9,8 +9,10 @@ import 'react-virtualized/styles.css'
 import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer'
 import List from 'react-virtualized/dist/commonjs/List'
 
-function evaluate(data, code, timeOnError) {
-  if (!code || !code.trim()) return data;
+function evaluate(data, code, ignoreCode, timeOnError) {
+  if (ignoreCode || !code || !code.trim()) {
+    return data;
+  }
   try {
     return eval(code);
   } catch (err) {
@@ -60,6 +62,7 @@ class DerivativeDataView extends Component {
     this.state = {
       derivative_data: [],
       showCodeEditor: false,
+      disableDerivativeCode: false,
       scrollToIndex: 0,
       rowCount: 0,
       scrollToBottom: true
@@ -71,6 +74,7 @@ class DerivativeDataView extends Component {
     this._noRowsRenderer = this._noRowsRenderer.bind(this);
     this._rowRenderer = this._rowRenderer.bind(this);
     this.scrollToBottomChange = this.scrollToBottomChange.bind(this);
+    this.toggleDisableDerivativeCode = this.toggleDisableDerivativeCode.bind(this);
   }
   update(val) {
     this.props.onCodeChange(val);
@@ -82,6 +86,7 @@ class DerivativeDataView extends Component {
     const filteredDerivedData = evaluate(
       val,
       this.props.code,
+      this.state.disableDerivativeCode,
       this.props.start || this.props.end || moment.utc().toDate()
     ).filter(x =>
       (this.props.start === null || moment.utc(x.timestamp).toDate() >= moment.utc(this.props.start).toDate()) &&
@@ -103,8 +108,13 @@ class DerivativeDataView extends Component {
       scrollToBottom: !this.state.scrollToBottom
     })
   }
+  toggleDisableDerivativeCode() {
+    this.setState({
+      disableDerivativeCode: !this.state.disableDerivativeCode
+    });
+  }
   componentWillReceiveProps(nextProps) {
-    if (typeof nextProps.data !== 'undefined' && nextProps.code !== '') {
+    if (typeof nextProps.data !== 'undefined') {
       this.run(nextProps.data);
     }
   }
@@ -119,6 +129,15 @@ class DerivativeDataView extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevState.rowCount !== this.state.rowCount) {
       this.scrollToBottom();
+    }
+    if (prevState.disableDerivativeCode !== this.state.disableDerivativeCode) {
+      this.run(this.props.data);
+      if (this.dataListRef) {
+        // "For Table and List, you'll need to call forceUpdateGrid to
+        // ensure that the inner Grid is also updated."
+        // - https://github.com/bvaughn/react-virtualized
+        this.dataListRef.forceUpdateGrid();
+      }
     }
   }
   _noRowsRenderer() {
@@ -139,6 +158,7 @@ class DerivativeDataView extends Component {
         {({width}) => (
           <List
             ref="List"
+            ref={(list) => { this.dataListRef = list; }}
             className="ScrollContainerData"
             height={600}
             overscanRowCount={10}
@@ -148,7 +168,8 @@ class DerivativeDataView extends Component {
             rowRenderer={this._rowRenderer}
             scrollToIndex={this.state.scrollToBottom ? this.state.scrollToIndex : undefined}
             width={width}
-            updateForcingProp={this.props.code}
+            updateForcingProp1={this.props.code}
+            updateForcingProp2={this.state.disableDerivativeCode}
           />
         )}
       </AutoSizer>
@@ -164,7 +185,7 @@ class DerivativeDataView extends Component {
             <button
               onClick={() => this.run()}
             >
-              Run
+              <i className="material-icons">play_arrow</i>
             </button>
             <button
               onClick={() => this.toggleCode()}
@@ -180,6 +201,12 @@ class DerivativeDataView extends Component {
                 onChange={this.scrollToBottomChange}
               />
             </label>
+            <button
+              onClick={() => this.toggleDisableDerivativeCode()}
+              className={this.state.disableDerivativeCode ? "disabledButton" : null}
+            >
+              <i className="material-icons">code</i>
+            </button>
           </div>
           { this.state.showCodeEditor &&
             <CodeMirror
