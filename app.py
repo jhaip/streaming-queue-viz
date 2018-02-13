@@ -165,7 +165,7 @@ def save_data(data):
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("build/index.html")
+        self.render("public/index.html")
 
     def post(self):
         data = tornado.escape.json_decode(self.request.body)

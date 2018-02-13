@@ -30,7 +30,7 @@ def threaded_rmq():
     any_views = False
     for row in db_c.execute("SELECT * FROM data WHERE source='view'"):
         any_views = True
-        logging.info(row)
+        # logging.info(row)
     if not any_views:
         initial_view_params = {
             "start": None,
