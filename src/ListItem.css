@@ -3,14 +3,19 @@
 }
 
 .Item {
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     display: flex;
     text-align: left;
 }
 
 .DateLabel {
     margin-right: 10px;
-    flex: 0 0 50px;
+    flex: 0 0 100px;
+    color: #afafaf;
+}
+.DateLabelDate {
+    color: #CCC;
+    margin-right: 10px;
 }
 
 .Value {

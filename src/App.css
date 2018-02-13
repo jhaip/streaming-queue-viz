@@ -55,7 +55,7 @@
 .annotationsAdd textarea {
     width: 100%;
     height: 100px;
-    font-family: monospace;
+    font-family: 'Source Code Pro', monospace;
     font-size: 18px;
     padding: 10px;
 }
