@@ -6,13 +6,16 @@
 }
 
 .TimeBlock {
-    background-color: #CCC;
-    border-right: 3px solid #555;
+    background-color: white;
+    padding: 5px;
+    border-right: 2px solid #E1E1E1;
+    border-top: 2px solid #E1E1E1;
+    border-bottom: 2px solid #E1E1E1;
 }
 .TimeBlock:first-of-type {
-    border-left: 3px solid #555;
+    border-left: 2px solid #E1E1E1;
 }
 .TimeBlock:hover {
-    background-color: #CAC;
+    background-color: #BBDDEE;
     cursor: pointer;
 }

@@ -1,8 +1,9 @@
 .ScrollContainer {
     flex: 1 1 50%;
     height: 600px;
-    border: 1px solid #EEE;
-    margin: 10px;
+    background-color: white;
+    border: 2px solid #E1E1E1;
+    margin: 0 10px;
     font-size: 16px;
     position: relative;
 }
@@ -13,14 +14,23 @@
 }
 
 .TimelineButton {
-    padding: 20px;
-    margin: 10px;
+    padding: 10px;
+    margin: 5px;
+    background-color: transparent;
+    border: none;
+    font-size: 20px;
+    outline: none;
+    cursor: pointer;
+}
+.TimelineButton:hover {
+    background-color: #E1E1E1;
 }
 
 .annotationsSidebar {
     flex: 0 0 300px;
     height: 600px;
-    border: 1px solid #EEE;
+    border: 2px solid #E1E1E1;
+    background-color: white;
     border-right: none;
     margin-left: 5px;
 }
@@ -39,8 +49,8 @@
 
 .annotationsAdd {
     padding: 10px;
-    border-top: 1px solid #EEE;
-    background-color: #EAEAEA;
+    border-top: 2px solid #E1E1E1;
+    background-color: #BBDDEE;
 }
 .annotationsAdd textarea {
     width: 100%;
@@ -56,13 +66,13 @@
     font-size: 18px;
 }
 
-button {
+.toggleButton {
     background-color: #EEE;
     color: #333;
     outline: none;
     cursor: pointer;
 }
-.disabledButton {
+.toggleButton.disabledButton {
     background-color: white;
     color: #999;
 }
