@@ -159,13 +159,13 @@ class DerivativeDataView extends Component {
   }
   renderList() {
     return (
-      <AutoSizer disableHeight>
-        {({width}) => (
+      <AutoSizer>
+        {({ height, width }) => (
           <List
             ref="List"
             ref={(list) => { this.dataListRef = list; }}
             className="ScrollContainerData"
-            height={600}
+            height={height}
             overscanRowCount={10}
             noRowsRenderer={this._noRowsRenderer}
             rowCount={this.state.rowCount}
