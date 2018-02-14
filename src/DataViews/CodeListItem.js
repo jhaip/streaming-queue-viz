@@ -4,7 +4,7 @@ import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/javascript/javascript'
 import 'codemirror/mode/python/python'
 import 'codemirror/mode/diff/diff'
-import './ListItem.css';
+import '../ListItem.css';
 import LineDiff from 'line-diff';
 import moment from 'moment'
 

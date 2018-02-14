@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types'
 import '../App.css';
-import ListItem from '../ListItem'
 import moment from 'moment'
 import 'react-virtualized/styles.css'
 import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer'
@@ -87,6 +86,8 @@ DefaultDataList.propTypes = {
   followEnd: PropTypes.bool,
   derivativeFunc: PropTypes.string,
   disablederivativeFunc: PropTypes.bool,
+  start: PropTypes.object,
+  end: PropTypes.object
 }
 
 export default DefaultDataList;

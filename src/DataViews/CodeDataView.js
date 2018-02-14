@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types'
 import '../App.css';
-import CodeListItem from '../CodeListItem'
-import moment from 'moment'
+import CodeListItem from './CodeListItem'
 
 class CodeDataView extends Component {
   scrollToBottom() {
-    this.messagesEnd.scrollIntoView();
+    if (this.props.followEnd) {
+      this.messagesEnd.scrollIntoView();
+    }
   }
   componentDidMount() {
     this.scrollToBottom();
@@ -14,10 +16,7 @@ class CodeDataView extends Component {
     this.scrollToBottom();
   }
   render() {
-    const listItems = this.props.data.filter(x =>
-      (this.props.start === null || moment.utc(x.timestamp).toDate() >= moment.utc(this.props.start).toDate()) &&
-      (this.props.end === null || moment.utc(x.timestamp).toDate() < moment.utc(this.props.end).toDate())
-    ).map((x, i, a) =>
+    const listItems = this.props.data.map((x, i, a) =>
       <CodeListItem
         key={i}
         datum={x}
@@ -25,16 +24,22 @@ class CodeDataView extends Component {
       />
     );
     return (
-      <div className="ScrollContainer" key="code">
-        <div className="ScrollContainerData">
-          {listItems}
-          <div style={{ float:"left", clear: "both" }}
-               ref={(el) => { this.messagesEnd = el; }}>
-          </div>
+      <div style={{padding: '20px'}}>
+        {listItems}
+        <div style={{ float:"left", clear: "both" }}
+             ref={(el) => { this.messagesEnd = el; }}>
         </div>
       </div>
     );
   }
+}
+CodeDataView.propTypes = {
+  data: PropTypes.array.isRequired,
+  followEnd: PropTypes.bool,
+  derivativeFunc: PropTypes.string,
+  disablederivativeFunc: PropTypes.bool,
+  start: PropTypes.object,
+  end: PropTypes.object
 }
 
 export default CodeDataView;

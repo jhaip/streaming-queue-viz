@@ -6,6 +6,8 @@ import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/javascript/javascript'
 import moment from 'moment'
 import DefaultDataList from './DefaultDataList'
+import CodeDataView from './CodeDataView'
+import AnnotationsDataView from './AnnotationsDataView'
 
 function evaluate(data, code, ignoreCode, timeOnError) {
   if (ignoreCode || !code || !code.trim()) {
@@ -114,6 +116,36 @@ class DerivativeDataView extends Component {
       this.run(this.props.data);
     }
   }
+  renderView() {
+    if (this.props.viewType === 'code') {
+      return (
+        <CodeDataView
+          data={this.state.derivative_data}
+          followEnd={this.state.scrollToBottom}
+          derivativeFunc={this.props.code}
+          disablederivativeFunc={this.state.disableDerivativeCode}
+        />
+      )
+    }
+    if (this.props.viewType === 'annotation') {
+      return (
+        <AnnotationsDataView
+          data={this.state.derivative_data}
+          followEnd={this.state.scrollToBottom}
+          derivativeFunc={this.props.code}
+          disablederivativeFunc={this.state.disableDerivativeCode}
+        />
+      )
+    }
+    return (
+      <DefaultDataList
+        data={this.state.derivative_data}
+        followEnd={this.state.scrollToBottom}
+        derivativeFunc={this.props.code}
+        disablederivativeFunc={this.state.disableDerivativeCode}
+      />
+    )
+  }
   render() {
     return (
       <div className="ScrollContainer" key="serial">
@@ -171,12 +203,7 @@ class DerivativeDataView extends Component {
             />
           }
         </div>
-        <DefaultDataList
-          data={this.state.derivative_data}
-          followEnd={this.state.scrollToBottom}
-          derivativeFunc={this.props.code}
-          disablederivativeFunc={this.state.disableDerivativeCode}
-        />
+        {this.renderView()}
       </div>
     );
   }
@@ -187,6 +214,7 @@ DerivativeDataView.propTypes = {
   onCodeChange: PropTypes.func.isRequired,
   start: PropTypes.object,
   end: PropTypes.object,
+  viewType: PropTypes.string
 }
 
 export default DerivativeDataView;

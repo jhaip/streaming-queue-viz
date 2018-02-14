@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import './App.css';
-import { saveAnnotation } from './actions'
+import '../App.css';
+import { saveAnnotation } from '../actions'
 import moment from 'moment'
 
-class Annotations extends Component {
+class AnnotationsDataView extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -50,30 +50,35 @@ class Annotations extends Component {
       )
     });
     return (
-      <div className="annotationsSidebar">
-        <div className="annoationsLayout">
-          <div className="annotationsList">
-            {listItems}
+      <div className="annoationsLayout">
+        <div className="annotationsList">
+          <div>
+            <div>
+              {listItems}
+            </div>
           </div>
-          <div className="annotationsAdd">
-            <textarea
-              onChange={this.newAnnotationChange}
-              value={this.state.newAnnotationText}
-              placeholder="Write a note to your future self about this moment."
-            />
-            <button
-              onClick={this.addAnnotation}
-            >Add</button>
-          </div>
+        </div>
+        <div className="annotationsAdd">
+          <textarea
+            onChange={this.newAnnotationChange}
+            value={this.state.newAnnotationText}
+            placeholder="Write a note to your future self about this moment."
+          />
+          <button
+            onClick={this.addAnnotation}
+          >Add</button>
         </div>
       </div>
     );
   }
 }
-Annotations.propTypes = {
+AnnotationsDataView.propTypes = {
+  data: PropTypes.array.isRequired,
+  followEnd: PropTypes.bool,
+  derivativeFunc: PropTypes.string,
+  disablederivativeFunc: PropTypes.bool,
   start: PropTypes.object,
-  end: PropTypes.object,
-  data: PropTypes.array
+  end: PropTypes.object
 }
 
 function mapStateToProps(state) {
@@ -87,4 +92,4 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Annotations);
+export default connect(mapStateToProps, mapDispatchToProps)(AnnotationsDataView);

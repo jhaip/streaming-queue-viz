@@ -2,12 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import './App.css';
-import ListItem from './ListItem'
-import CodeListItem from './CodeListItem'
-import LineDiff from 'line-diff';
 import Timeline from './Timeline';
-import Annotations from './Annotations';
-import CodeDataView from './DataViews/CodeDataView'
 import DerivativeDataView from './DataViews/DerivativeDataView'
 import moment from 'moment'
 import { updateViewTime, dataViewDerivativeFuncChange } from './actions'
@@ -26,25 +21,10 @@ class App extends Component {
       (typeof d.end !== 'undefined') ? d.end : this.props.end
     )
   }
-  componentDidMount() {
-    window.LineDiff = LineDiff;
-  }
   getSubviews() {
     return this.props.subviews && this.props.subviews.map((v, i) => {
       const sourceName = v.sources[0];
       const sourceData = ((this.props.list || [])[sourceName] || []);
-      if (v.type === "code") {
-        return (
-          <CodeDataView
-            key={i}
-            data={sourceData}
-            start={this.props.start}
-            end={this.props.end}
-          />
-        );
-      } else if (v.type === 'annotation') {
-        return <Annotations data={sourceData} key={i} />
-      }
       return (
         <DerivativeDataView
           key={i}
@@ -53,6 +33,7 @@ class App extends Component {
           end={this.props.end}
           code={v.func}
           onCodeChange={(code) => this.props.dataViewDerivativeFuncChange(i, code)}
+          viewType={v.type}
         />
       );
     })
