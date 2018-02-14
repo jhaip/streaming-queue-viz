@@ -66,9 +66,17 @@
     font-size: 18px;
 }
 
-.toggleButton {
-    background-color: #EEE;
+.menuButton {
+    background-color: #E1E1E1;
     color: #333;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+.toggleButton {
+    background-color: #E1E1E1;
+    color: #333;
+    border: none;
     outline: none;
     cursor: pointer;
 }

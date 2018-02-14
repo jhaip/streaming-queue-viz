@@ -184,10 +184,11 @@ class DerivativeDataView extends Component {
     return (
       <div className="ScrollContainer" key="serial">
         <div
-          style={{borderBottom: '2px solid blue', position: 'absolute', background: 'white', width: '100%', zIndex: 10}}
+          style={{position: 'absolute', background: '#E1E1E1', width: '100%', zIndex: 10, borderBottom: '2px solid #E1E1E1'}}
         >
           <div>
             <button
+              className="menuButton"
               onClick={() => this.run()}
             >
               <i className="material-icons">play_arrow</i>
