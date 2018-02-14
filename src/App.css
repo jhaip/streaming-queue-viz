@@ -78,14 +78,10 @@
     outline: none;
     cursor: pointer;
 }
-.toggleButton {
-    background-color: #E1E1E1;
-    color: #333;
-    border: none;
-    outline: none;
-    cursor: pointer;
+.menuButton:hover {
+    background-color: #BBDDEE !important;
 }
-.toggleButton.enabledButton {
+.menuButton.enabledButton {
     background-color: white;
     color: #999;
 }

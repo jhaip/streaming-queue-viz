@@ -194,20 +194,20 @@ class DerivativeDataView extends Component {
               <i className="material-icons">play_arrow</i>
             </button>
             <button
-              className={this.state.showCodeEditor ? "enabledButton toggleButton" : "toggleButton"}
+              className={this.state.showCodeEditor ? "enabledButton menuButton" : "menuButton"}
               onClick={() => this.toggleCode()}
             >
               <i className="material-icons">visibility</i>
             </button>
             <button
               onClick={() => this.scrollToBottomChange()}
-              className={this.state.scrollToBottom ? "enabledButton toggleButton" : "toggleButton"}
+              className={this.state.scrollToBottom ? "enabledButton menuButton" : "menuButton"}
             >
               <i className="material-icons">settings_backup_restore</i>
             </button>
             <button
               onClick={() => this.toggleDisableDerivativeCode()}
-              className={!this.state.disableDerivativeCode ? "enabledButton toggleButton" : "toggleButton"}
+              className={!this.state.disableDerivativeCode ? "enabledButton menuButton" : "menuButton"}
             >
               <i className="material-icons">code</i>
             </button>
