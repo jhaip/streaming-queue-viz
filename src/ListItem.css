@@ -22,7 +22,8 @@
     text-align: left;
     display: block;
     font-family: monospace;
-    white-space: pre-wrap;
+    white-space: nowrap;
+    overflow-x: scroll;
 }
 
 .CodeMirrorContainer {
