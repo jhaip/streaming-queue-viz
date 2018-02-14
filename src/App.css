@@ -85,7 +85,17 @@
     outline: none;
     cursor: pointer;
 }
-.toggleButton.disabledButton {
+.toggleButton.enabledButton {
     background-color: white;
     color: #999;
+}
+
+.DataViewHeader {
+    position: absolute;
+    background: #E1E1E1;
+    width: 100%;
+    z-index: 10;
+    border: 2px solid #E1E1E1;
+    border-bottom-width: 3px;
+    box-sizing: border-box;
 }

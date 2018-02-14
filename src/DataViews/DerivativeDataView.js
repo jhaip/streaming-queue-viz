@@ -184,7 +184,7 @@ class DerivativeDataView extends Component {
     return (
       <div className="ScrollContainer" key="serial">
         <div
-          style={{position: 'absolute', background: '#E1E1E1', width: '100%', zIndex: 10, borderBottom: '2px solid #E1E1E1'}}
+          className="DataViewHeader"
         >
           <div>
             <button
@@ -194,20 +194,20 @@ class DerivativeDataView extends Component {
               <i className="material-icons">play_arrow</i>
             </button>
             <button
-              className={!this.state.showCodeEditor ? "disabledButton toggleButton" : "toggleButton"}
+              className={this.state.showCodeEditor ? "enabledButton toggleButton" : "toggleButton"}
               onClick={() => this.toggleCode()}
             >
               <i className="material-icons">visibility</i>
             </button>
             <button
               onClick={() => this.scrollToBottomChange()}
-              className={!this.state.scrollToBottom ? "disabledButton toggleButton" : "toggleButton"}
+              className={this.state.scrollToBottom ? "enabledButton toggleButton" : "toggleButton"}
             >
               <i className="material-icons">settings_backup_restore</i>
             </button>
             <button
               onClick={() => this.toggleDisableDerivativeCode()}
-              className={this.state.disableDerivativeCode ? "disabledButton toggleButton" : "toggleButton"}
+              className={!this.state.disableDerivativeCode ? "enabledButton toggleButton" : "toggleButton"}
             >
               <i className="material-icons">code</i>
             </button>
