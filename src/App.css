@@ -99,9 +99,9 @@
 
 .menuDropdown {
     height: 24px;
-    width: 100px;
+    width: 110px;
     position: relative;
-    top: -6px;
+    top: -5px;
     border: 0;
     padding-left: 7px;
     margin-left: 5px;
@@ -110,4 +110,7 @@
     outline-offset: -1px;
     -webkit-appearance: none;
     -webkit-border-radius: 0px;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 16px;
+    color: blue;
 }

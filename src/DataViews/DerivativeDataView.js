@@ -212,10 +212,16 @@ class DerivativeDataView extends Component {
               <i className="material-icons">code</i>
             </button>
             <select className="menuDropdown">
-              <option value="grapefruit">Grapefruit</option>
-              <option value="lime">Lime</option>
-              <option value="coconut">Coconut</option>
-              <option value="mango">Mango</option>
+              <option value="serial">serial</option>
+              <option value="code">code</option>
+              <option value="view">view</option>
+              <option value="annotation">annotation</option>
+            </select>
+            <select className="menuDropdown">
+              <option value="default">default</option>
+              <option value="code">code</option>
+              <option value="annotation">annotation</option>
+              <option value="line-graph">line graph</option>
             </select>
           </div>
           { this.state.showCodeEditor &&
