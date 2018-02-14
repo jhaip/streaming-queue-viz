@@ -73,8 +73,10 @@ class App extends Component {
           start={this.props.start}
           end={this.props.end}
         />
-        <div style={{display: 'flex'}}>
-          {this.getSubviews()}
+        <div style={{flexGrow: 1, overflow: 'hidden', height: '100%', marginBottom: '30px'}}>
+          <div style={{display: 'flex', height: '100%'}}>
+            {this.getSubviews()}
+          </div>
         </div>
       </div>
     );
