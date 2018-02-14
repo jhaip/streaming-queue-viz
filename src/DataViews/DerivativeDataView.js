@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types'
 import '../App.css';
-import ListItem from '../ListItem'
 import {Controlled as CodeMirror} from 'react-codemirror2'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/javascript/javascript'
 import moment from 'moment'
-import 'react-virtualized/styles.css'
-import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer'
-import List from 'react-virtualized/dist/commonjs/List'
+import DefaultDataList from './DefaultDataList'
 
 function evaluate(data, code, ignoreCode, timeOnError) {
   if (ignoreCode || !code || !code.trim()) {
@@ -63,16 +61,11 @@ class DerivativeDataView extends Component {
       derivative_data: [],
       showCodeEditor: false,
       disableDerivativeCode: false,
-      scrollToIndex: 0,
-      rowCount: 0,
       scrollToBottom: true
     };
     this.update = this.update.bind(this);
     this.run = this.run.bind(this);
     this.toggleCode = this.toggleCode.bind(this);
-    this.renderList = this.renderList.bind(this);
-    this._noRowsRenderer = this._noRowsRenderer.bind(this);
-    this._rowRenderer = this._rowRenderer.bind(this);
     this.scrollToBottomChange = this.scrollToBottomChange.bind(this);
     this.toggleDisableDerivativeCode = this.toggleDisableDerivativeCode.bind(this);
   }
@@ -93,9 +86,7 @@ class DerivativeDataView extends Component {
       (this.props.end === null || moment.utc(x.timestamp).toDate() < moment.utc(this.props.end).toDate())
     );
     this.setState({
-      derivative_data: filteredDerivedData,
-      rowCount: filteredDerivedData.length,
-      scrollToIndex: filteredDerivedData.length-1,
+      derivative_data: filteredDerivedData
     });
   }
   toggleCode() {
@@ -118,67 +109,10 @@ class DerivativeDataView extends Component {
       this.run(nextProps.data);
     }
   }
-  scrollToBottom() {
-    this.setState((prevState, props) => {
-      scrollToIndex: this.state.rowCount-1
-    });
-  }
-  componentDidMount() {
-    this.scrollToBottom();
-  }
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.rowCount !== this.state.rowCount) {
-      this.scrollToBottom();
-    }
     if (prevState.disableDerivativeCode !== this.state.disableDerivativeCode) {
       this.run(this.props.data);
-      if (this.dataListRef) {
-        // "For Table and List, you'll need to call forceUpdateGrid to
-        // ensure that the inner Grid is also updated."
-        // - https://github.com/bvaughn/react-virtualized
-        this.dataListRef.forceUpdateGrid();
-      }
     }
-  }
-  _noRowsRenderer() {
-    return <div style={{marginTop: '40px', color: 'grey'}}>No results.</div>;
-  }
-  _rowRenderer({index, isScrolling, key, style}) {
-    const datum = this.state.derivative_data[index];
-    return (
-      <div className="Item" key={key} style={style}>
-        <span className="DateLabel">
-          <span className="DateLabelDate">
-            {moment.utc(datum.timestamp).format("M/D")}
-          </span>
-          {moment.utc(datum.timestamp).format("HH:mm:ss")}
-        </span>
-        <div className="Value" dangerouslySetInnerHTML={{__html: datum.value}} />
-      </div>
-    );
-  }
-  renderList() {
-    return (
-      <AutoSizer>
-        {({ height, width }) => (
-          <List
-            ref="List"
-            ref={(list) => { this.dataListRef = list; }}
-            className="ScrollContainerData"
-            height={height}
-            overscanRowCount={10}
-            noRowsRenderer={this._noRowsRenderer}
-            rowCount={this.state.rowCount}
-            rowHeight={28}
-            rowRenderer={this._rowRenderer}
-            scrollToIndex={this.state.scrollToBottom ? this.state.scrollToIndex : undefined}
-            width={width}
-            updateForcingProp1={this.props.code}
-            updateForcingProp2={this.state.disableDerivativeCode}
-          />
-        )}
-      </AutoSizer>
-    );
   }
   render() {
     return (
@@ -237,10 +171,22 @@ class DerivativeDataView extends Component {
             />
           }
         </div>
-        {this.renderList()}
+        <DefaultDataList
+          data={this.state.derivative_data}
+          followEnd={this.state.scrollToBottom}
+          derivativeFunc={this.props.code}
+          disablederivativeFunc={this.state.disableDerivativeCode}
+        />
       </div>
     );
   }
+}
+DerivativeDataView.propTypes = {
+  data: PropTypes.array.isRequired,
+  code: PropTypes.string,
+  onCodeChange: PropTypes.func.isRequired,
+  start: PropTypes.object,
+  end: PropTypes.object,
 }
 
 export default DerivativeDataView;
