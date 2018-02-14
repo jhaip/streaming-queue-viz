@@ -94,4 +94,20 @@
     border: 2px solid #E1E1E1;
     border-bottom-width: 3px;
     box-sizing: border-box;
+    height: 32px;
+}
+
+.menuDropdown {
+    height: 24px;
+    width: 100px;
+    position: relative;
+    top: -6px;
+    border: 0;
+    padding-left: 7px;
+    margin-left: 5px;
+    background-color: white;
+    outline: 1px solid white;
+    outline-offset: -1px;
+    -webkit-appearance: none;
+    -webkit-border-radius: 0px;
 }
