@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import './App.css';
 import { saveAnnotation } from './actions'
+import moment from 'moment'
 
 class Annotations extends Component {
   constructor(props) {
