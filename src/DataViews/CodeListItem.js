@@ -40,12 +40,13 @@ class CodeListItem extends Component {
     // }
     this.setState({
       'showDiff': showDiff,
-      'code': (showDiff && this.props.prevDatum) ? window
-        .LineDiff(this.props.prevDatum.value, this.props.datum.value, 1)
-        .toString()
-        .replace(new RegExp("\\n - ", 'g'), "\n- ")
-        .replace(new RegExp("\\n + ", 'g'), "\n+ ")
-        .replace(new RegExp("\\n   ", 'g'), "\n  ") : this.props.datum.value
+      'code': (showDiff && this.props.prevDatum)
+        ? new LineDiff(this.props.prevDatum.value, this.props.datum.value, 1)
+          .toString()
+          .replace(new RegExp("\\n - ", 'g'), "\n- ")
+          .replace(new RegExp("\\n + ", 'g'), "\n+ ")
+          .replace(new RegExp("\\n   ", 'g'), "\n  ")
+        : this.props.datum.value
     });
   }
   render() {
