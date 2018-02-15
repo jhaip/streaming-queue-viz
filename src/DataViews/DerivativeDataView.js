@@ -8,6 +8,7 @@ import moment from 'moment'
 import DefaultDataList from './DefaultDataList'
 import CodeDataView from './CodeDataView'
 import AnnotationsDataView from './AnnotationsDataView'
+import LineGraphDataView from './LineGraphDataView'
 
 function evaluate(data, code, ignoreCode, timeOnError) {
   if (ignoreCode || !code || !code.trim()) {
@@ -138,6 +139,16 @@ class DerivativeDataView extends Component {
     if (this.props.viewType === 'annotation') {
       return (
         <AnnotationsDataView
+          data={this.state.derivative_data}
+          followEnd={this.state.scrollToBottom}
+          derivativeFunc={this.props.code}
+          disablederivativeFunc={this.state.disableDerivativeCode}
+        />
+      )
+    }
+    if (this.props.viewType === 'line-graph') {
+      return (
+        <LineGraphDataView
           data={this.state.derivative_data}
           followEnd={this.state.scrollToBottom}
           derivativeFunc={this.props.code}

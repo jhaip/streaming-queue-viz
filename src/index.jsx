@@ -11,6 +11,8 @@ import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import { initWebsockets } from './ws';
 
+window.Chart = require('chart.js');  // for react-chartkick
+
 const store = configureStore();
 
 ReactDOM.render(
