@@ -70,6 +70,8 @@ class DerivativeDataView extends Component {
     this.toggleCode = this.toggleCode.bind(this);
     this.scrollToBottomChange = this.scrollToBottomChange.bind(this);
     this.toggleDisableDerivativeCode = this.toggleDisableDerivativeCode.bind(this);
+    this.handleViewTypeChange = this.handleViewTypeChange.bind(this);
+    this.handleViewSourceChange = this.handleViewSourceChange.bind(this);
   }
   update(val) {
     this.props.onCodeChange(val);
@@ -105,6 +107,12 @@ class DerivativeDataView extends Component {
     this.setState({
       disableDerivativeCode: !this.state.disableDerivativeCode
     });
+  }
+  handleViewTypeChange(event) {
+    this.props.onViewTypeChange(event.target.value);
+  }
+  handleViewSourceChange(event) {
+    this.props.onViewSourceChange(event.target.value);
   }
   componentWillReceiveProps(nextProps) {
     if (typeof nextProps.data !== 'undefined') {
@@ -177,14 +185,22 @@ class DerivativeDataView extends Component {
             >
               <i className="material-icons">code</i>
             </button>
-            <select className="menuDropdown">
+            <select
+              className="menuDropdown"
+              value={this.props.source}
+              onChange={this.handleViewSourceChange}
+            >
               <option value="serial">serial</option>
               <option value="code">code</option>
               <option value="view">view</option>
               <option value="annotation">annotation</option>
             </select>
-            <select className="menuDropdown">
-              <option value="default">default</option>
+            <select
+              className="menuDropdown"
+              value={this.props.viewType}
+              onChange={this.handleViewTypeChange}
+            >
+              <option value="">default</option>
               <option value="code">code</option>
               <option value="annotation">annotation</option>
               <option value="line-graph">line graph</option>
@@ -211,7 +227,10 @@ class DerivativeDataView extends Component {
 DerivativeDataView.propTypes = {
   data: PropTypes.array.isRequired,
   code: PropTypes.string,
+  source: PropTypes.string.isRequired,
   onCodeChange: PropTypes.func.isRequired,
+  onViewTypeChange: PropTypes.func.isRequired,
+  onViewSourceChange: PropTypes.func.isRequired,
   start: PropTypes.object,
   end: PropTypes.object,
   viewType: PropTypes.string

@@ -57,7 +57,6 @@ export function getData(params) {
 
 export const RECEIVE_VIEW_UPDATE = 'RECEIVE_VIEW_UPDATE';
 function receiveViewUpdate(view) {
-  console.log("receiveViewUpdate");
   return {
     type: RECEIVE_VIEW_UPDATE,
     view
@@ -76,10 +75,6 @@ export function updateViewTime(start, end) {
         end: end ? moment.utc(end).toDate() : null,
         subviews: state.view.subviews
       }
-      console.log("updateViewTime");
-      console.log(start);
-      console.log(end);
-      console.log(view);
       dispatch(receiveViewUpdate(view));
       dispatch(saveData("view", {
         start: start ? moment.utc(start).toISOString() : null,
@@ -107,7 +102,57 @@ export function dataViewDerivativeFuncChange(viewNumber, derivativeFunc) {
       end: state.view.end,
       subviews: subviewsCopy
     }
-    console.log("dataViewDerivativeFuncChange");
+    dispatch(receiveViewUpdate(view));
+    dispatch(saveData("view", {
+      start: state.view.start ? state.view.start.toISOString() : null,
+      end: state.view.end ? state.view.end.toISOString() : null,
+      subviews: subviewsCopy
+    }));
+  }
+}
+
+export function dataViewViewTypeChange(viewNumber, viewType) {
+  return (dispatch, getState) => {
+    const state = getState();
+    const subviewsCopy = state.view.subviews.slice(0);
+    subviewsCopy[viewNumber].type = viewType;
+    // 'code' and 'annoation' are special views for only their source
+    if (viewType === 'code') {
+      subviewsCopy[viewNumber].sources = ['code'];
+    }
+    if (viewType === 'annotation') {
+      subviewsCopy[viewNumber].sources = ['annotation'];
+    }
+    const view = {
+      start: state.view.start,
+      end: state.view.end,
+      subviews: subviewsCopy
+    }
+    dispatch(receiveViewUpdate(view));
+    dispatch(saveData("view", {
+      start: state.view.start ? state.view.start.toISOString() : null,
+      end: state.view.end ? state.view.end.toISOString() : null,
+      subviews: subviewsCopy
+    }));
+  }
+}
+
+export function dataViewSourceChange(viewNumber, source) {
+  return (dispatch, getState) => {
+    const state = getState();
+    const subviewsCopy = state.view.subviews.slice(0);
+    subviewsCopy[viewNumber].sources = [source];
+    const viewType = subviewsCopy[viewNumber].type;
+    // 'code' and 'annoation' are special views for only their source
+    // so use the default as a fallback
+    if (viewType === 'code' || viewType === 'annoation') {
+      subviewsCopy[viewNumber].type = '';
+    }
+    const view = {
+      start: state.view.start,
+      end: state.view.end,
+      subviews: subviewsCopy
+    }
     dispatch(receiveViewUpdate(view));
     dispatch(saveData("view", {
       start: state.view.start ? state.view.start.toISOString() : null,

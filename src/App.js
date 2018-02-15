@@ -5,7 +5,12 @@ import './App.css';
 import Timeline from './Timeline';
 import DerivativeDataView from './DataViews/DerivativeDataView'
 import moment from 'moment'
-import { updateViewTime, dataViewDerivativeFuncChange } from './actions'
+import {
+  updateViewTime,
+  dataViewDerivativeFuncChange,
+  dataViewViewTypeChange,
+  dataViewSourceChange
+} from './actions'
 
 
 class App extends Component {
@@ -32,8 +37,11 @@ class App extends Component {
           start={this.props.start}
           end={this.props.end}
           code={v.func}
-          onCodeChange={(code) => this.props.dataViewDerivativeFuncChange(i, code)}
           viewType={v.type}
+          source={sourceName}
+          onCodeChange={(code) => this.props.dataViewDerivativeFuncChange(i, code)}
+          onViewTypeChange={(viewType) => this.props.dataViewViewTypeChange(i, viewType)}
+          onViewSourceChange={(source) => this.props.dataViewSourceChange(i, source)}
         />
       );
     })
@@ -86,7 +94,11 @@ const mapDispatchToProps = dispatch => {
     updateViewTime: (start, end) =>
       dispatch(updateViewTime(start, end)),
     dataViewDerivativeFuncChange: (viewNumber, derivativeFunc) =>
-      dispatch(dataViewDerivativeFuncChange(viewNumber, derivativeFunc))
+      dispatch(dataViewDerivativeFuncChange(viewNumber, derivativeFunc)),
+    dataViewViewTypeChange: (viewNumber, viewType) =>
+      dispatch(dataViewViewTypeChange(viewNumber, viewType)),
+    dataViewSourceChange: (viewNumber, source) =>
+      dispatch(dataViewSourceChange(viewNumber, source))
   }
 }
 
