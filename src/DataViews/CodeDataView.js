@@ -24,7 +24,7 @@ class CodeDataView extends Component {
       />
     );
     return (
-      <div style={{padding: '20px'}}>
+      <div style={{padding: '40px 10px 0px 10px'}}>
         {listItems}
         <div style={{ float:"left", clear: "both" }}
              ref={(el) => { this.messagesEnd = el; }}>

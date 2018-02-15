@@ -7,7 +7,7 @@ import { LineChart } from 'react-chartkick';
 class LineGraphDataView extends Component {
   render() {
     return (
-      <div style={{padding: '20px'}}>
+      <div style={{padding: '40px 10px 0px 10px'}}>
         <LineChart
           data={this.props.data
             .filter(d => !isNaN(parseFloat(d.value)) && isFinite(d.value))
