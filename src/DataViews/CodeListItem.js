@@ -36,16 +36,17 @@ class CodeListItem extends Component {
     // if (showDiff && this.props.prevDatum) {
     //   console.log(this.props.prevDatum.value);
     //   console.log(this.props.datum.value);
-    //   console.log(window.LineDiff(this.props.prevDatum.value, this.props.datum.value).toString());
+    //   window.lastDiff = new LineDiff(this.props.prevDatum.value, this.props.datum.value).toString()
+    //   console.log(lastDiff);
     // }
     this.setState({
       'showDiff': showDiff,
       'code': (showDiff && this.props.prevDatum)
         ? new LineDiff(this.props.prevDatum.value, this.props.datum.value, 1)
           .toString()
-          .replace(new RegExp("\\n - ", 'g'), "\n- ")
-          .replace(new RegExp("\\n + ", 'g'), "\n+ ")
-          .replace(new RegExp("\\n   ", 'g'), "\n  ")
+          .split(`\n   `).join(`\n  `)
+          .split(`\n - `).join(`\n- `)
+          .split(`\n + `).join(`\n+ `)
         : this.props.datum.value
     });
   }
