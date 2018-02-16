@@ -23,7 +23,7 @@
     display: block;
     font-family: monospace;
     white-space: nowrap;
-    overflow-x: scroll;
+    overflow-x: hidden;
 }
 
 .CodeMirrorContainer {
