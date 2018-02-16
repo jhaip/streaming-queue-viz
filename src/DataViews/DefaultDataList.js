@@ -19,9 +19,9 @@ class DefaultDataList extends Component {
     this._rowRenderer = this._rowRenderer.bind(this);
   }
   scrollToBottom() {
-    this.setState((prevState, props) => {
+    this.setState({
       scrollToIndex: this.props.data.length-1
-    });
+    })
   }
   componentDidMount() {
     this.scrollToBottom();
