@@ -1,0 +1,8 @@
+data.map(d => {
+  const match = d.value.match(/z = ([^,]+)G/);
+  const val = match && match.length === 2 ? match[1] : "";
+  return {
+    "timestamp": d.timestamp,
+   	"value":  val
+  }
+});
