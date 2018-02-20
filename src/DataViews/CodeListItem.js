@@ -25,6 +25,11 @@ class CodeListItem extends Component {
             this.state.hide !== nextState.hide ||
             this.state.showDiff !== nextState.showDiff);
   }
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      code: nextProps.datum.value || ''
+    })
+  }
   update(val) {
     this.setState({'code': val});
   }

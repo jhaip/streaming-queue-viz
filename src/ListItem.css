@@ -32,3 +32,6 @@
 .CodeMirrorContainer .react-codemirror2 {
     border: 2px solid #CCC;
 }
+.CodeMirrorContainer .CodeMirror {
+    height: 500px;
+}
