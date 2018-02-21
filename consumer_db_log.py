@@ -43,11 +43,6 @@ def threaded_rmq():
                 },
                 {
                     "func": None,
-                    "type": "",
-                    "sources": ["serial"]
-                },
-                {
-                    "func": None,
                     "type": "code",
                     "sources": ["code"]
                 },
