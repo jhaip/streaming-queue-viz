@@ -6,3 +6,22 @@ data.map(d => {
    	"value":  val
   }
 });
+
+data.reduce((acc, d) => {
+  if (acc.foundTrace) {
+    acc.trace = acc.trace.concat(d);
+    if (d.value.indexOf("KeyboardInterrupt") >= 0) {
+      acc.foundTrace = false;
+    } else if (d.value.indexOf("soft reboot") >= 0) {
+      acc.values = acc.values.concat(acc.trace);
+      acc.trace = [];
+      acc.foundTrace = false;
+    }
+  } else {
+    if (d.value.indexOf("Traceback") >= 0) {
+      acc.foundTrace = true;
+      acc.trace = [d];
+    }
+  }
+  return acc;
+}, {foundTrace: false, trace: [], values: []}).values;
