@@ -99,6 +99,9 @@
     box-sizing: border-box;
     height: 32px;
 }
+.DataViewHeader .react-codemirror2 {
+    border-bottom: 3px solid #E1E1E1;
+}
 
 .menuDropdown {
     height: 24px;
