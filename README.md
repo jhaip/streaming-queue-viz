@@ -2,6 +2,8 @@
 
 A tool to help tell a more complete story of the making process. Code versions, serial log data, and notes are automatically saved and shown across time.
 
+[Demo video on YouTube](https://www.youtube.com/watch?v=LqK2nMTE90g)
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development. Currently the project is not deployed publicly and must be run on your own computer. Setup has only been tested on a Mac computer.
@@ -11,8 +13,8 @@ These instructions will get you a copy of the project up and running on your loc
 You will need a system with Docker, Python, pip, and NPM installed.
 
 * [Docker Installation Guide](https://docs.docker.com/install/)
-* [pip Installation](https://pip.pypa.io/en/stable/installing/)
-* [npm Installation](https://docs.npmjs.com/getting-started/installing-node)
+* [pip Installation Guide](https://pip.pypa.io/en/stable/installing/)
+* [npm Installation Guide](https://docs.npmjs.com/getting-started/installing-node)
 
 The ability to save code changes and serial logs have only been developed with a Circuit Playground Express board using CircuitPython on a Mac computer. CircuitPython makes tracking code changes as simple as tracking the changes of a file mounted on your computer. Other electronic boards or platforms like Arduino could be supported but would require additional development. I am open to contributions in this area.
 
