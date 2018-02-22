@@ -6,7 +6,29 @@ A tool to help tell a more complete story of the making process. Code versions, 
 
 ![Screenshot](/screenshots/screenshot.png?raw=true "Screenshot")
 
-## Getting Started
+**Backstory**
+
+This is a prototype tool to explore the idea of seeing changes in code and data over time. It moves way from the guess-check-forget cycle I found myself in while working on hobby electronics projects. My computer was filling up with screenshots and text files of projects I had worked on but I didn't remember their collective story. With this tool, the story of making is automatically recorded as I work so I can go back to it later or share it with others. Saving tweet-sized notes about what I am thinking while making enhances the story.
+
+**System Overview**
+
+I am prototyping with the Circuit Playground Express microcontroller board. A script runs my computer to track when a new version of code is sent to the board. Serial log messages from my running code are also tracked. These scripts send the data to a web API that saves the data and sends updates to the user interface.
+
+**User Interface**
+
+The interface shows each version of code and the serial logs from that version of code. Each view of data is customizable: you can switch between data sources and visualizations and add JavaScript functions to manipulate the data before it is visualized.
+
+**User Interface: Manipulation Functions**
+
+The JavaScript functions fill the need between what can be seen from the raw serial logs and analyzing data while not activity making. These functions are automatically applied to new data streamed from the web API to help with seeing in the moment. Example uses include filtering values above a threshold, converting units, or parsing number from text before making a line graph.
+
+**Future Work**
+
+* The missing piece of the story is a visual recording of what was being done and prompted the changes to the code and data. A camera feed should be integrated as another data source.
+* Expand annotations: annotate individual data values, whole views of data, and time ranges.
+* Export data as a blog post outline, an embeddable timeline, or a movie.
+
+## Setup
 
 These instructions will get you a copy of the project up and running on your local machine for development. Currently the project is not deployed publicly and must be run on your own computer. Setup has only been tested on a Mac computer.
 
