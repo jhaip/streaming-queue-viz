@@ -4,6 +4,8 @@ A tool to help tell a more complete story of the making process. Code versions, 
 
 [Demo video on YouTube](https://www.youtube.com/watch?v=LqK2nMTE90g)
 
+![Screenshot](/screenshots/screenshot.png?raw=true "Screenshot")
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development. Currently the project is not deployed publicly and must be run on your own computer. Setup has only been tested on a Mac computer.
